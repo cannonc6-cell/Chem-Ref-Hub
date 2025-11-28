@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 const BASE = import.meta.env.BASE_URL || '/';
 
 export default function About() {
+  useEffect(() => {
+    document.title = 'About – ChemRef Hub';
+  }, []);
   return (
     <div className="app-container">
       <div className="page-header">

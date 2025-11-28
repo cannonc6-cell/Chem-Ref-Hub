@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 export default function Glossary() {
+  useEffect(() => {
+    document.title = 'Glossary – ChemRef Hub';
+  }, []);
   const terms = [
     { term: 'CAS Number', def: 'Unique numerical identifier assigned by the Chemical Abstracts Service (CAS) to every chemical described in the literature.' },
     { term: 'SDS', def: 'Safety Data Sheet. Official document providing hazards, handling, and emergency measures for a chemical.' },

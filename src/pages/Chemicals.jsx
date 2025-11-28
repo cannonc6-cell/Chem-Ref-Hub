@@ -142,6 +142,10 @@ function combineChemicals(base, additions) {
 		return matchesSearch && matchesTag && matchesFav;
 	});
 
+	useEffect(() => {
+		document.title = 'Chemicals – ChemRef Hub';
+	}, []);
+
 	const toggleFavorite = (id) => {
 		setFavorites((prev) => {
 			const next = prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id];

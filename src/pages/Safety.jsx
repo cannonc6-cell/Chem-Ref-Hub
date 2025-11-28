@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import '../styles/modern.css';
 
 function Safety() {
+  useEffect(() => {
+    document.title = 'Safety – ChemRef Hub';
+  }, []);
   return (
     <div className="app-container">
       <div className="page-header">

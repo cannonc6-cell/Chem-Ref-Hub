@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 export default function Resources() {
+  useEffect(() => {
+    document.title = 'Resources – ChemRef Hub';
+  }, []);
   return (
     <div className="app-container">
       <div className="page-header">

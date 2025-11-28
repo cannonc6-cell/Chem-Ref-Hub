@@ -11,6 +11,7 @@ import About from './pages/About.jsx';
 import FAQ from './pages/FAQ.jsx';
 import Resources from './pages/Resources.jsx';
 import Glossary from './pages/Glossary.jsx';
+import NotFound from './pages/NotFound.jsx';
 
 function App() {
   return (
@@ -32,7 +33,7 @@ function App() {
               <Route path="/faq" element={<FAQ />} />
               <Route path="/resources" element={<Resources />} />
               <Route path="/glossary" element={<Glossary />} />
-              <Route path="*" element={<Dashboard />} />
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </div>
         </main>

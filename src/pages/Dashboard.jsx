@@ -69,6 +69,10 @@ function Dashboard() {
 		} catch { return []; }
 	}, [chemicals]);
 
+	useEffect(() => {
+		document.title = 'Dashboard – ChemRef Hub';
+	}, []);
+
 	return (
 		<div className="app-container">
 			{alertMsg && (

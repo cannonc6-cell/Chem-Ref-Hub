@@ -21,6 +21,10 @@ function Logbook() {
   const [alertMsg, setAlertMsg] = useState('');
   const [alertVariant, setAlertVariant] = useState('success');
 
+  useEffect(() => {
+    document.title = 'Logbook – ChemRef Hub';
+  }, []);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     // Basic validation

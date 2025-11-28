@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 export default function FAQ() {
+  useEffect(() => {
+    document.title = 'FAQ – ChemRef Hub';
+  }, []);
   return (
     <div className="app-container">
       <div className="page-header">
