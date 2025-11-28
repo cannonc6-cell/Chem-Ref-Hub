@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import '../styles/modern.css';
 
 const BASE = import.meta.env.BASE_URL || '/';
@@ -97,7 +98,7 @@ function Dashboard() {
 									<div className="text-muted">Total chemicals</div>
 									<div className="fs-3 fw-bold">{loading ? '—' : totalChemicals}</div>
 								</div>
-								<a className="btn btn-outline-primary" href="/chemicals">Browse</a>
+								<Link className="btn btn-outline-primary" to="/chemicals">Browse</Link>
 							</div>
 						</div>
 					</div>
@@ -110,7 +111,7 @@ function Dashboard() {
 									<div className="text-muted">Favorites</div>
 									<div className="fs-3 fw-bold">{favoritesCount}</div>
 								</div>
-								<a className="btn btn-outline-primary" href="/chemicals">Manage</a>
+								<Link className="btn btn-outline-primary" to="/chemicals">Manage</Link>
 							</div>
 						</div>
 					</div>
@@ -123,7 +124,7 @@ function Dashboard() {
 									<div className="text-muted">Add new</div>
 									<div className="fs-3 fw-bold">—</div>
 								</div>
-								<a className="btn btn-primary" href="/add-chemical">Add Chemical</a>
+								<Link className="btn btn-primary" to="/add-chemical">Add Chemical</Link>
 							</div>
 						</div>
 					</div>
@@ -165,7 +166,7 @@ function Dashboard() {
 					</div>
 				</div>
 				<div className="card-footer text-end">
-					<a className="btn btn-outline-primary" href="/logbook">Open Logbook</a>
+					<Link className="btn btn-outline-primary" to="/logbook">Open Logbook</Link>
 				</div>
 			</div>
 		</div>
