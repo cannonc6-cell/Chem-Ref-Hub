@@ -1,0 +1,202 @@
+/* Modern theme and UI polish */
+
+/* Visually hidden until focused (for skip link) */
+.visually-hidden-focusable:not(:focus):not(:focus-within) {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+:root {
+  /* New brand palette (no gradients) */
+  --slate-grey:      #77878bff;
+  --dark-slate-grey: #305252ff;
+  --gunmetal:        #373e40ff;
+  --teal:            #488286ff;
+  --light-blue:      #b7d5d4ff;
+
+  /* Semantic mapping */
+  --primary:       var(--dark-slate-grey);
+  --primary-dark:  #1f3434;
+  --primary-rgb:   48,82,82;
+  --secondary:     var(--teal);
+  --accent:        var(--light-blue);
+  --success: #2e8b57;
+  --warning: #c97a00;
+  --danger: #ae2012;
+
+  /* Surface & text */
+  --background: #f5f8f8;
+  --surface: #ffffff;
+  --text: #111516;
+  --text-light: #5b6769;
+  --border: #d1dddf;
+  --border-strong: #a9b9bc;
+
+  /* Type & spacing */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --line-height-base: 1.5;
+  --radius-sm: 0.375rem;
+  --radius: 0.5rem;
+  --radius-lg: 0.75rem;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+  --shadow-lg: 0 6px 18px rgba(0,0,0,0.15);
+}
+
+/* Base */
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  background-color: var(--background);
+  color: var(--text);
+  line-height: var(--line-height-base);
+  padding-top: 64px; /* navbar height */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main { flex: 1; width: 100%; max-width: 1280px; margin: 0 auto; padding: 2rem 1rem; }
+
+h1, h2, h3, h4, h5, h6 { margin: 0 0 1rem; font-weight: 600; color: var(--primary); }
+h1 { font-size: 2rem; }
+
+/* Colorful accents for headings and section titles */
+.section-title { color: var(--primary); border-left: 6px solid var(--secondary); padding-left: 0.5rem; }
+.section-title.coral { border-left-color: var(--coral); }
+.section-title.yellow { border-left-color: var(--yellow); }
+.section-title.purple { border-left-color: var(--purple); }
+
+/* Navbar (Bootstrap override-friendly) */
+.navbar { background-color: var(--primary) !important; border-bottom: none; box-shadow: var(--shadow-lg); }
+.navbar .navbar-brand { color: #fff !important; font-weight: 700; }
+.navbar .nav-link { color: #eaf6f6 !important; font-weight: 600; }
+.navbar .nav-link.active { background: rgba(255,255,255,0.2); border-radius: var(--radius-sm); }
+
+/* Links: make them match the palette and add hover underline */
+a { color: var(--primary); text-decoration: none; }
+a:hover { color: var(--accent); text-decoration: underline; }
+
+/* Page chrome */
+.app-container { max-width: 1400px; margin: 0 auto; padding: 1rem 1rem 2rem; background: transparent; }
+.page-header { margin-bottom: 1.5rem; padding: 1.25rem; border-radius: var(--radius); background-color: var(--secondary); color: #fff; box-shadow: var(--shadow-lg); }
+.subheader { margin: 0.75rem 0 1rem; color: var(--text-light); border-bottom: 2px solid rgba(0,0,0,0.06); padding-bottom: 0.4rem; }
+.subheader.coral { border-bottom-color: var(--coral); }
+.subheader.yellow { border-bottom-color: var(--yellow); }
+.subheader.purple { border-bottom-color: var(--purple); }
+.header-content { display: flex; align-items: center; gap: 0.75rem; }
+.app-logo { width: 48px; height: 48px; }
+
+.search-controls { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+.search-box { flex: 1; min-width: 260px; max-width: 520px; }
+.action-buttons { display: flex; gap: 0.5rem; align-items: center; }
+.filter-box { min-width: 180px; }
+
+/* Inputs */
+.form-control { width: 100%; padding: 0.625rem 0.875rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); color: var(--text); }
+.form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px rgba(0,95,115,0.15); }
+.search-input { padding-left: 2rem; background-repeat: no-repeat; background-position: 0.75rem center; background-size: 1rem; }
+
+/* Ensure input / select / textarea borders are permanently visible and consistent across theme
+   - visible border at all times (not only on focus)
+   - subtle focus ring using primary color
+*/
+.form-control, .form-select, input[type= text], input[type=url], textarea {
+  border: 1px solid var(--border-strong);
+  box-shadow: none;
+  background: var(--surface);
+  color: var(--text);
+}
+.form-control:focus, .form-select:focus, input[type=text]:focus, input[type=url]:focus, textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.06);
+}
+
+/* Make selects and textareas match the form-control padding and radius */
+.form-select, textarea { padding: 0.625rem 0.875rem; border-radius: var(--radius); }
+
+/* Increase specificity to override any library resets in forms inside app containers */
+.container .form-control, .container .form-select, .container input, .container textarea {
+  border: 1px solid var(--border-strong) !important;
+}
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.6rem 1.1rem; font-weight: 600; font-size: 0.9rem; border-radius: var(--radius); transition: all 0.2s; cursor: pointer; text-decoration: none; }
+.btn-primary { background: var(--primary); color: #fff; border: none; }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-outline-primary { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+.btn-outline-primary:hover { background: var(--primary); color: #fff; }
+
+/* Colorful button variants using new accent colors */
+.btn-coral { background: var(--coral); color: #fff; border: none; }
+.btn-coral:hover { background: #ff5252; }
+.btn-yellow { background: var(--yellow); color: #232323; border: none; font-weight: 700; }
+.btn-yellow:hover { background: #ffc83d; }
+.btn-purple { background: var(--purple); color: #fff; border: none; }
+.btn-purple:hover { background: #6a5acd; }
+
+/* Alert/badge styling using new accent colors */
+.alert-coral { background: rgba(255, 107, 107, 0.1); border-left: 4px solid var(--coral); color: #8b2e2e; padding: 0.75rem 1rem; border-radius: var(--radius); }
+.alert-yellow { background: rgba(255, 209, 102, 0.15); border-left: 4px solid var(--yellow); color: #996600; padding: 0.75rem 1rem; border-radius: var(--radius); }
+.alert-purple { background: rgba(123, 104, 238, 0.1); border-left: 4px solid var(--purple); color: #5a4a9e; padding: 0.75rem 1rem; border-radius: var(--radius); }
+
+.badge-coral { background: var(--coral); color: #fff; padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+.badge-yellow { background: var(--yellow); color: #232323; padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+.badge-purple { background: var(--purple); color: #fff; padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+
+/* Chemicals grid */
+.chemical-grid { padding: 1.25rem 0 0.5rem; }
+.grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; justify-items: stretch; }
+.chemical-card { display: flex; flex-direction: column; width: 100%; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); color: #222; text-decoration: none; overflow: hidden; transition: box-shadow 0.2s, transform 0.2s; border: 1px solid var(--border); }
+.chemical-card:hover { box-shadow: 0 10px 26px rgba(0,0,0,0.18); transform: translateY(-3px); border-color: var(--secondary); }
+.card-image img { width: 100%; height: 120px; object-fit: cover; border-radius: 12px 12px 0 0; }
+.card-content { padding: 0.75rem 1rem 1rem; display: flex; flex-direction: column; gap: 0.35rem; }
+.card-title { font-size: 1.05rem; font-weight: 700; color: #2a3a4d; margin: 0; }
+.card-formula { font-size: 0.95rem; color: #4a5a6a; }
+.card-brief { font-size: 0.9rem; color: #6a7a8a; }
+.card-content .btn { margin-top: 0.4rem; align-self: flex-start; }
+
+/* Tables */
+.data-table-container { background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); border: 1px solid var(--border); overflow: hidden; padding: 1rem; }
+.table { width: 100%; border-collapse: separate; border-spacing: 0; }
+.table th { background-color: var(--gunmetal); color: #fff; padding: 0.75rem 1rem; font-weight: 700; text-align: left; }
+.table td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); color: var(--text); }
+.table tbody tr:nth-child(even) { background-color: rgba(183, 213, 212, 0.18); }
+.table tbody tr:hover { background-color: rgba(72, 130, 134, 0.14); }
+
+/* Logbook table */
+.logbook-table { background: #fff; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); }
+
+/* Footer */
+.main-footer { background-color: var(--primary); color: #fff; padding: 3rem 0 1.5rem; margin-top: 3rem; }
+.footer-content { max-width: 1280px; margin: 0 auto; padding: 0 1.5rem; }
+.footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem; }
+.footer-section h3 { font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; color: #fff; }
+.footer-section ul { list-style: none; padding: 0; margin: 0; }
+.footer-section ul li { margin-bottom: 0.75rem; }
+.footer-section ul li a { color: #dfeef1; text-decoration: none; }
+.footer-section ul li a:hover { color: #fff; text-decoration: underline; }
+.footer-bottom { padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.2); text-align: center; font-size: 0.875rem; color: rgba(255,255,255,0.8); }
+.footer-version { margin-top: 0.25rem; color: rgba(255,255,255,0.7); }
+
+/* Utility background ribbons for sections/cards (flat tints, no gradients) */
+.bg-ribbon-teal { background-color: rgba(72, 130, 134, 0.08); }
+.bg-ribbon-coral { background-color: rgba(183, 213, 212, 0.5); }
+.bg-ribbon-purple { background-color: rgba(119, 135, 139, 0.18); }
+
