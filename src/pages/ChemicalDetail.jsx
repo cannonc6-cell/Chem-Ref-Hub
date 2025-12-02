@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import bundledData from "../data/chemical_data.json";
 import "../styles/modern.css";
+import { useChemicals } from "../hooks/useChemicals";
 
-const BASE = import.meta.env.BASE_URL || "/";
+const BASE = import.meta.env.BASE_URL || '/';
 
 function CollapsibleSection({ title, children }) {
   const [open, setOpen] = useState(false);
@@ -20,71 +20,56 @@ function CollapsibleSection({ title, children }) {
 function ChemicalDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { chemicals, loading, error: hookError, updateChemical, deleteChemical } = useChemicals();
+
   const [chemical, setChemical] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [editForm, setEditForm] = useState(null);
   const [deleted, setDeleted] = useState(false);
-  const [error, setError] = useState("");
   const [alertMsg, setAlertMsg] = useState("");
   const [alertVariant, setAlertVariant] = useState("warning");
 
+  // Find the chemical from the loaded list
   useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const res = await fetch(`${BASE}chemical_data.json`);
-        if (!res.ok) throw new Error('Network error');
-        let base;
-        try {
-          base = await res.json();
-        } catch {
-          base = bundledData;
-          if (!cancelled) {
-            setAlertVariant('danger');
-            setAlertMsg('Received invalid chemical data from server. Using built-in dataset instead.');
-          }
-        }
+    if (loading) return;
 
-        let user = [];
-        try {
-          user = JSON.parse(localStorage.getItem('userChemicals') || '[]');
-          if (!Array.isArray(user)) user = [];
-        } catch {
-          user = [];
-        }
-
-        const list = Array.isArray(user) ? [...base, ...user] : base;
-        if (!cancelled) selectById(list);
-      } catch {
-        let user = [];
-        try {
-          user = JSON.parse(localStorage.getItem('userChemicals') || '[]');
-          if (!Array.isArray(user)) user = [];
-        } catch {
-          user = [];
-        }
-        const list = Array.isArray(user) ? [...bundledData, ...user] : bundledData;
-        if (!cancelled) {
-          setAlertVariant('warning');
-          setAlertMsg('Could not reach the server. Showing built-in data and any local additions.');
-          selectById(list);
-        }
-      }
-    })();
-    return () => { cancelled = true };
-  }, [id]);
-
-  function selectById(list) {
     const decodedId = decodeURIComponent(id);
     const match = (c) => {
       const candidate = String(c.CAS || c.id || c['Chemical Name'] || c.name || '').toLowerCase();
       return candidate === String(decodedId).toLowerCase();
     };
-    const chem = list.find(match);
+    const chem = chemicals.find(match);
     setChemical(chem || null);
     setEditForm(chem ? { ...chem } : null);
-    if (!chem) setError('Chemical not found.');
-  }
+  }, [id, chemicals, loading]);
+
+  const handleEditClick = () => {
+    setEditMode(true);
+    setEditForm({ ...chemical });
+  };
+
+  const handleEditChange = (e) => {
+    setEditForm({ ...editForm, [e.target.name]: e.target.value });
+  };
+
+  const handleEditSave = (e) => {
+    e.preventDefault();
+    // Use the hook to update and persist
+    updateChemical(editForm);
+    setChemical({ ...editForm });
+    setEditMode(false);
+    setAlertVariant('success');
+    setAlertMsg('Changes saved successfully.');
+  };
+
+  const handleDelete = () => {
+    if (window.confirm("Are you sure you want to delete this chemical? This cannot be undone.")) {
+      if (chemical) {
+        deleteChemical(chemical.id);
+        setDeleted(true);
+      }
+    }
+  };
 
   if (deleted) {
     return (
@@ -117,6 +102,10 @@ function ChemicalDetail() {
     );
   }
 
+  if (loading) {
+    return <div className="app-container"><p>Loading...</p></div>;
+  }
+
   if (!chemical) {
     return (
       <div className="app-container">
@@ -144,7 +133,7 @@ function ChemicalDetail() {
               ></button>
             </div>
           )}
-          <p className="mb-0">{error || "Loading..."}</p>
+          <p className="mb-0">{hookError || "Chemical not found."}</p>
         </div>
       </div>
     );
@@ -156,43 +145,8 @@ function ChemicalDetail() {
     // GHS pictograms (Unicode icons)
     const match = chemical["Hazard Information"].match(/([\u2600-\u26FF\u2700-\u27BF\u2B50-\u2BFF\u2620-\u2623\u274C\u2757\u26A0\u26A1\u26D4\u26C4\u26C8\u26FD\u269B\u269C\u2695\u2696\u2697\u2698\u2699\u269A\u269B\u269C\u26A0\u26A1\u26D4\u26C4\u26C8\u26FD\u2620\u2622\u2623\u262E\u262F\u2638\u2639\u263A\u263B\u263C\u263D\u263E\u263F\u2640\u2641\u2642\u2643\u2644\u2645\u2646\u2647\u2648\u2649\u264A\u264B\u264C\u264D\u264E\u264F\u2650\u2651\u2652\u2653\u2654\u2655\u2656\u2657\u2658\u2659\u265A\u265B\u265C\u265D\u265E\u265F\u2660\u2661\u2662\u2663\u2664\u2665\u2666\u2667\u2668\u2669\u266A\u266B\u266C\u266D\u266E\u266F\u2670\u2671\u2672\u2673\u2674\u2675\u2676\u2677\u2678\u2679\u267A\u267B\u267C\u267D\u267E\u267F]+)/g);
     if (match) pictograms = match;
-    // NFPA 704 Diamond
-    const nfpaMatch = chemical["Hazard Information"].match(/NFPA 704 Diamond: [^\u25cf\n]+/);
-    if (nfpaMatch) {
-      // Example: "NFPA 704 Diamond: \u25cb Health: 3 \u25cb Flammability: 0 \u25cb Reactivity: 2 \u25cb Special: OX (oxidizer)"
-      const health = nfpaMatch[0].match(/Health:\s*([0-4])/);
-      const flammability = nfpaMatch[0].match(/Flammability:\s*([0-4])/);
-      const reactivity = nfpaMatch[0].match(/Reactivity:\s*([0-4])/);
-      const special = nfpaMatch[0].match(/Special:\s*([A-Za-z0-9\- ()]+)/);
-      nfpa = {
-        health: health ? health[1] : '',
-        flammability: flammability ? flammability[1] : '',
-        reactivity: reactivity ? reactivity[1] : '',
-        special: special ? special[1].trim() : ''
-      };
-    }
+    // NFPA 704 Diamond logic could go here if needed
   }
-
-  const handleEditClick = () => {
-    setEditMode(true);
-    setEditForm({ ...chemical });
-  };
-
-  const handleEditChange = (e) => {
-    setEditForm({ ...editForm, [e.target.name]: e.target.value });
-  };
-
-  const handleEditSave = (e) => {
-    e.preventDefault();
-    setChemical({ ...editForm });
-    setEditMode(false);
-  };
-
-  const handleDelete = () => {
-    if (window.confirm("Are you sure you want to delete this chemical? This cannot be undone.")) {
-      setDeleted(true);
-    }
-  };
 
   return (
     <div className="app-container">
@@ -237,7 +191,7 @@ function ChemicalDetail() {
               e.target.src = base + '.png';
             } else {
               e.target.onerror = null;
-      e.target.src = `${BASE}assets/logo.svg`;
+              e.target.src = `${BASE}assets/logo.svg`;
             }
           }}
           alt={chemical["Chemical Name"]}

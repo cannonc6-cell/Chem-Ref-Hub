@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/modern.css";
+import { useChemicals } from "../hooks/useChemicals";
 
 const CATEGORY_OPTIONS = [
 	"Acid", "Base", "Salt", "Solvent", "Oxidizer", "Reducer", "Fuel", "Metal", "Nonmetal", "Toxic", "Flammable", "Corrosive", "Explosive", "Inorganic", "Organic", "Laboratory", "Food Additive", "Fertilizer", "Pyrotechnic", "Cleaning Agent"
@@ -8,22 +9,24 @@ const CATEGORY_OPTIONS = [
 
 function AddChemical() {
 	const navigate = useNavigate();
-		const [form, setForm] = useState({
-			title: "",
-			"Chemical Name": "",
-			Formula: "",
-			CAS: "",
-			"Molecular Weight": "",
-			Density: "",
-			Appearance: "",
-			"Hazard Information": "",
-			Properties: "",
-			"Handling & Storage": "",
-			"Safety Notes": "",
-			"Lab Use Notes": "",
-			"SDS Link": "",
-			categories: [],
-		});
+	const { chemicals, addChemical } = useChemicals();
+
+	const [form, setForm] = useState({
+		title: "",
+		"Chemical Name": "",
+		Formula: "",
+		CAS: "",
+		"Molecular Weight": "",
+		Density: "",
+		Appearance: "",
+		"Hazard Information": "",
+		Properties: "",
+		"Handling & Storage": "",
+		"Safety Notes": "",
+		"Lab Use Notes": "",
+		"SDS Link": "",
+		categories: [],
+	});
 	const [error, setError] = useState("");
 
 	useEffect(() => {
@@ -46,20 +49,21 @@ function AddChemical() {
 			setError("Chemical Name and CAS # are required.");
 			return;
 		}
-		// Save to localStorage list (userChemicals) and navigate
+
+		// Check for duplicates using the hook's data
+		const exists = chemicals.some((c) => (c.CAS || '').toLowerCase() === (form.CAS || '').toLowerCase());
+		if (exists) {
+			setError('A chemical with this CAS already exists.');
+			return;
+		}
+
 		try {
-			const list = JSON.parse(localStorage.getItem('userChemicals') || '[]');
-			const exists = Array.isArray(list) && list.some((c) => (c.CAS || '').toLowerCase() === (form.CAS || '').toLowerCase());
-			if (exists) {
-				setError('A chemical with this CAS already exists in your local list.');
-				return;
-			}
 			const toSave = { ...form, id: form.CAS || form["Chemical Name"] };
-			const updated = Array.isArray(list) ? [toSave, ...list] : [toSave];
-			localStorage.setItem('userChemicals', JSON.stringify(updated));
+			addChemical(toSave);
 			alert('Chemical added to your local list.');
 			navigate("/chemicals");
-		} catch {
+		} catch (err) {
+			console.error(err);
 			setError('Failed to save. Please try again.');
 		}
 	};

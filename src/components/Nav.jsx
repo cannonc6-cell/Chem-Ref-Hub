@@ -1,20 +1,41 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
-function Nav() {
+function Nav({ searchValue, onSearchChange, showSearch = false }) {
   const location = useLocation();
   const [open, setOpen] = useState(false);
 
   return (
-  <nav className="navbar navbar-expand-lg fixed-top" style={{
+    <nav className="navbar navbar-expand-lg fixed-top" style={{
       backgroundColor: 'var(--primary)',
       boxShadow: 'var(--shadow-lg)'
     }}>
-      <div className="container">
-    <a href="#main-content" className="visually-hidden-focusable btn btn-light btn-sm me-2">Skip to content</a>
-  <Link className="navbar-brand" to="/dashboard" style={{ fontWeight: '600' }}>
+      <div className="container-fluid" style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 1rem' }}>
+        <a href="#main-content" className="visually-hidden-focusable btn btn-light btn-sm me-2">Skip to content</a>
+        <Link className="navbar-brand" to="/dashboard" style={{ fontWeight: '700', fontSize: 'var(--text-xl)' }}>
           ChemRef Hub
         </Link>
+
+        {/* Integrated Search Bar (Desktop) */}
+        {showSearch && (
+          <div className="d-none d-lg-flex flex-grow-1 mx-4" style={{ maxWidth: '500px' }}>
+            <input
+              type="search"
+              className="form-control"
+              placeholder="Search chemicals..."
+              value={searchValue || ''}
+              onChange={(e) => onSearchChange && onSearchChange(e.target.value)}
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                color: '#fff',
+                padding: '0.5rem 1rem',
+                borderRadius: 'var(--radius-md)',
+              }}
+            />
+          </div>
+        )}
+
         <button
           className="navbar-toggler"
           type="button"
@@ -22,10 +43,34 @@ function Nav() {
           aria-expanded={open ? "true" : "false"}
           aria-label="Toggle navigation"
           onClick={() => setOpen(!open)}
+          style={{
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+            padding: '0.5rem'
+          }}
         >
           <span className="navbar-toggler-icon"></span>
         </button>
+
         <div className={`collapse navbar-collapse ${open ? 'show' : ''}`} id="navbarResponsive">
+          {/* Mobile Search Bar */}
+          {showSearch && (
+            <div className="d-lg-none mt-3 mb-2">
+              <input
+                type="search"
+                className="form-control"
+                placeholder="Search chemicals..."
+                value={searchValue || ''}
+                onChange={(e) => onSearchChange && onSearchChange(e.target.value)}
+                style={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  color: '#fff',
+                  padding: '0.75rem 1rem',
+                }}
+              />
+            </div>
+          )}
+
           <ul className="navbar-nav ms-auto">
             <li className="nav-item">
               <Link
@@ -116,4 +161,3 @@ function Nav() {
 }
 
 export default Nav;
-

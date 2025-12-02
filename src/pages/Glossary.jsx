@@ -1,9 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import '../styles/modern.css';
 
 export default function Glossary() {
   useEffect(() => {
     document.title = 'Glossary – ChemRef Hub';
   }, []);
+
+  const [searchTerm, setSearchTerm] = useState('');
+
   const terms = [
     { term: 'CAS Number', def: 'Unique numerical identifier assigned by the Chemical Abstracts Service (CAS) to every chemical described in the literature.' },
     { term: 'SDS', def: 'Safety Data Sheet. Official document providing hazards, handling, and emergency measures for a chemical.' },
@@ -16,22 +20,47 @@ export default function Glossary() {
     { term: 'Miscible', def: 'Liquids that mix in all proportions forming a homogeneous solution.' },
     { term: 'PPE', def: 'Personal Protective Equipment such as gloves, goggles, and lab coats.' },
   ];
+
+  const filteredTerms = terms.filter(({ term, def }) =>
+    term.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    def.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="app-container">
       <div className="page-header">
         <div className="header-content">
           <h1 className="section-title">Glossary</h1>
         </div>
+        <p className="lead mb-0" style={{ position: 'relative', zIndex: 1, marginTop: 'var(--space-2)' }}>
+          Common chemistry and safety terms
+        </p>
       </div>
-      <div className="data-table-container">
-        <dl className="mb-0">
-          {terms.map(({ term, def }) => (
-            <div className="mb-2" key={term}>
-              <dt className="fw-bold subheader-accent">{term}</dt>
-              <dd className="mb-0 text-muted">{def}</dd>
+
+      <div className="search-controls" style={{ marginBottom: 'var(--space-4)' }}>
+        <input
+          type="search"
+          className="form-control"
+          placeholder="Search terms..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{ flex: 1 }}
+        />
+      </div>
+
+      <div className="grid-container" style={{ gridTemplateColumns: '1fr' }}>
+        {filteredTerms.length === 0 ? (
+          <div className="info-card" style={{ textAlign: 'center' }}>
+            <p style={{ margin: 0, color: 'var(--text-secondary)' }}>No terms found matching "{searchTerm}"</p>
+          </div>
+        ) : (
+          filteredTerms.map(({ term, def }) => (
+            <div className="info-card" key={term}>
+              <h3>{term}</h3>
+              <p style={{ margin: 0, color: 'var(--text-secondary)' }}>{def}</p>
             </div>
-          ))}
-        </dl>
+          ))
+        )}
       </div>
     </div>
   );
