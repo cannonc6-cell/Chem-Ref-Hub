@@ -18,8 +18,8 @@ function AppContent() {
   const location = useLocation();
   const [search, setSearch] = useState("");
 
-  // Show search in navbar only on Chemicals page
-  const showSearch = location.pathname === '/chemicals';
+  // Search is now handled locally in Chemicals page
+  const showSearch = false;
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -34,7 +34,7 @@ function AppContent() {
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/chemicals" element={<Chemicals searchFromNav={search} />} />
+            <Route path="/chemicals" element={<Chemicals />} />
             <Route path="/chemicals/:id" element={<ChemicalDetail />} />
             <Route path="/add-chemical" element={<AddChemical />} />
             <Route path="/safety" element={<Safety />} />

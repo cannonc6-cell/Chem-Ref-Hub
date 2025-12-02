@@ -16,9 +16,10 @@ const extractTags = (data) => {
 	return Array.from(tags);
 };
 
-function Chemicals({ searchFromNav = "" }) {
+function Chemicals() {
 	const { chemicals, loading, error, favorites, toggleFavorite, addChemical } = useChemicals();
 
+	const [searchTerm, setSearchTerm] = useState("");
 	const [selectedTag, setSelectedTag] = useState("");
 	const [favoritesOnly, setFavoritesOnly] = useState(false);
 	const [alertMsg, setAlertMsg] = useState("");
@@ -28,15 +29,15 @@ function Chemicals({ searchFromNav = "" }) {
 	// Extract tags from the loaded chemicals
 	const allTags = useMemo(() => extractTags(chemicals), [chemicals]);
 
-	// Filter chemicals using search from navbar
+	// Filter chemicals using local search
 	const filteredChemicals = useMemo(() => {
 		return chemicals.filter((chem) => {
-			const matchesSearch = chem.name.toLowerCase().includes(searchFromNav.toLowerCase());
+			const matchesSearch = chem.name.toLowerCase().includes(searchTerm.toLowerCase());
 			const matchesTag = !selectedTag || chem.tags.includes(selectedTag);
 			const matchesFav = !favoritesOnly || favorites.includes(chem.id);
 			return matchesSearch && matchesTag && matchesFav;
 		});
-	}, [chemicals, searchFromNav, selectedTag, favoritesOnly, favorites]);
+	}, [chemicals, searchTerm, selectedTag, favoritesOnly, favorites]);
 
 	useEffect(() => {
 		document.title = 'Chemicals – ChemRef Hub';
@@ -128,6 +129,16 @@ function Chemicals({ searchFromNav = "" }) {
 			</div>
 			<div className="search-controls">
 				<div className="filter-box">
+					<input
+						type="search"
+						className="form-control"
+						placeholder="Search chemicals..."
+						value={searchTerm}
+						onChange={(e) => setSearchTerm(e.target.value)}
+						style={{ flex: 1 }}
+					/>
+				</div>
+				<div className="filter-box">
 					<select
 						className="form-select"
 						aria-label="Filter chemicals by tag"
@@ -160,39 +171,37 @@ function Chemicals({ searchFromNav = "" }) {
 				{filteredChemicals.length === 0 ? (
 					<div className="text-center">No chemicals found.</div>
 				) : (
-					<div className="grid-container">
-						{filteredChemicals.map((chem) => (
-							<Link
-								to={`/chemicals/${encodeURIComponent(chem.id)}`}
-								key={chem.id}
-								className="chemical-card"
-							>
-								<div className="card-image">
-									<img
-										src={chem.image}
-										alt={chem.name || 'Chemical'}
-										loading="lazy"
-										onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = `${BASE}assets/logo.svg`; }}
-										style={{ width: '100%', height: '120px', objectFit: 'cover', borderRadius: '8px 8px 0 0' }}
-									/>
-								</div>
-								<div className="card-content">
-									<h3 className="card-title">{chem.name}</h3>
-									<div className="card-formula">{chem.formula}</div>
-									<div className="card-brief">{chem.appearance}</div>
-									<button
-										type="button"
-										className={`btn btn-sm ${favorites.includes(chem.id) ? 'btn-warning' : 'btn-outline-secondary'}`}
-										onClick={(e) => { e.preventDefault(); toggleFavorite(chem.id); }}
-										aria-pressed={favorites.includes(chem.id)}
-										aria-label={favorites.includes(chem.id) ? 'Remove from favorites' : 'Add to favorites'}
-									>
-										{favorites.includes(chem.id) ? '\u2605 Favorite' : '\u2606 Favorite'}
-									</button>
-								</div>
-							</Link>
-						))}
-					</div>
+					filteredChemicals.map((chem) => (
+						<Link
+							to={`/chemicals/${encodeURIComponent(chem.id)}`}
+							key={chem.id}
+							className="chemical-card"
+						>
+							<div className="card-image">
+								<img
+									src={chem.image}
+									alt={chem.name || 'Chemical'}
+									loading="lazy"
+									onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = `${BASE}assets/logo.svg`; }}
+									style={{ width: '100%', height: '120px', objectFit: 'cover', borderRadius: '8px 8px 0 0' }}
+								/>
+							</div>
+							<div className="card-content">
+								<h3 className="card-title">{chem.name}</h3>
+								<div className="card-formula">{chem.formula}</div>
+								<div className="card-brief">{chem.appearance}</div>
+								<button
+									type="button"
+									className={`btn btn-sm ${favorites.includes(chem.id) ? 'btn-warning' : 'btn-outline-secondary'}`}
+									onClick={(e) => { e.preventDefault(); toggleFavorite(chem.id); }}
+									aria-pressed={favorites.includes(chem.id)}
+									aria-label={favorites.includes(chem.id) ? 'Remove from favorites' : 'Add to favorites'}
+								>
+									{favorites.includes(chem.id) ? '\u2605 Favorite' : '\u2606 Favorite'}
+								</button>
+							</div>
+						</Link>
+					))
 				)}
 			</div>
 		</div>
