@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/modern.css';
+import { useRecentlyViewed } from '../hooks/useRecentlyViewed';
 
 const BASE = import.meta.env.BASE_URL || '/';
 
@@ -9,6 +10,7 @@ function Dashboard() {
 	const [loading, setLoading] = useState(true);
 	const [alertMsg, setAlertMsg] = useState('');
 	const [alertVariant, setAlertVariant] = useState('warning');
+	const { recentItems } = useRecentlyViewed();
 
 	useEffect(() => {
 		let cancelled = false;
@@ -135,42 +137,66 @@ function Dashboard() {
 				</div>
 			</div>
 
-			<div className="card">
-				<div className="card-header"><span className="subheader-accent">Recent logbook entries</span></div>
-				<div className="card-body p-0">
-					<div className="table-responsive">
-						<table className="table mb-0">
-							<thead>
-								<tr>
-									<th>Date</th>
-									<th>Chemical</th>
-									<th>Quantity</th>
-									<th>Action</th>
-									<th>Notes</th>
-								</tr>
-							</thead>
-							<tbody>
-								{recentEntries.length === 0 ? (
-									<tr><td colSpan="5" className="text-center py-3">No entries yet</td></tr>
-								) : recentEntries.map((e) => (
-									<tr key={e.id}>
-										<td>{new Date(e.date).toLocaleDateString()}</td>
-										<td>{e.chemical}</td>
-										<td>{e.quantity}</td>
-										<td>
-											<span className={`badge ${
-												e.action === 'used' ? 'bg-warning' : e.action === 'added' ? 'bg-success' : 'bg-danger'
-											}`}>{e.action}</span>
-										</td>
-										<td>{e.notes}</td>
-									</tr>
-								))}
-							</tbody>
-						</table>
+			<div className="row g-3">
+				<div className="col-12 col-md-6">
+					<div className="card shadow-sm h-100">
+						<div className="card-header bg-white">
+							<h5 className="mb-0">Recently Viewed</h5>
+						</div>
+						<div className="card-body p-0">
+							<div className="list-group list-group-flush">
+								{recentItems.length === 0 ? (
+									<div className="p-3 text-center text-muted">No recently viewed chemicals</div>
+								) : (
+									recentItems.map((item) => (
+										<Link
+											key={item.id}
+											to={`/chemicals/${encodeURIComponent(item.id)}`}
+											className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+										>
+											<div>
+												<div className="fw-medium">{item.name}</div>
+												<small className="text-muted">{item.formula}</small>
+											</div>
+											<small className="text-muted">
+												{new Date(item.timestamp).toLocaleDateString()}
+											</small>
+										</Link>
+									))
+								)}
+							</div>
+						</div>
 					</div>
 				</div>
-				<div className="card-footer text-end">
-					<Link className="btn btn-outline-primary" to="/logbook">Open Logbook</Link>
+				<div className="col-12 col-md-6">
+					<div className="card shadow-sm h-100">
+						<div className="card-header bg-white">
+							<h5 className="mb-0">Recent Logbook Entries</h5>
+						</div>
+						<div className="card-body p-0">
+							<div className="list-group list-group-flush">
+								{recentEntries.length === 0 ? (
+									<div className="p-3 text-center text-muted">No recent entries</div>
+								) : (
+									recentEntries.map((entry) => (
+										<div key={entry.id} className="list-group-item">
+											<div className="d-flex w-100 justify-content-between">
+												<h6 className="mb-1">{entry.chemicalName || entry.chemical}</h6>
+												<small className="text-muted">{new Date(entry.date).toLocaleDateString()}</small>
+											</div>
+											<p className="mb-1 small">{entry.action}</p>
+											<small className="text-muted">
+												{entry.quantity} {entry.unit}
+											</small>
+										</div>
+									))
+								)}
+							</div>
+						</div>
+						<div className="card-footer text-end bg-white border-top-0">
+							<Link className="btn btn-sm btn-outline-primary" to="/logbook">View Logbook</Link>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

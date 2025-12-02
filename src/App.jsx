@@ -2,9 +2,12 @@ import { BrowserRouter as Router, Routes, Route, Link, Navigate, useLocation } f
 import { useState } from 'react';
 import Footer from './components/Footer.jsx';
 import Nav from './components/Nav.jsx';
+import BackToTop from './components/BackToTop.jsx';
+import Breadcrumbs from './components/Breadcrumbs.jsx';
 import Chemicals from './pages/Chemicals.jsx';
 import AddChemical from './pages/AddChemical.jsx';
 import Dashboard from './pages/Dashboard.jsx';
+import Calculators from './pages/Calculators.jsx';
 import Safety from './pages/Safety.jsx';
 import Logbook from './pages/Logbook.jsx';
 import ChemicalDetail from './pages/ChemicalDetail.jsx';
@@ -30,6 +33,7 @@ function AppContent() {
       />
       <main id="main-content" style={{ flex: 1, paddingTop: '70px' }}>
         <div className="container">
+          <Breadcrumbs />
           {/* Lower nav bar removed as requested */}
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
@@ -37,6 +41,7 @@ function AppContent() {
             <Route path="/chemicals" element={<Chemicals />} />
             <Route path="/chemicals/:id" element={<ChemicalDetail />} />
             <Route path="/add-chemical" element={<AddChemical />} />
+            <Route path="/calculators" element={<Calculators />} />
             <Route path="/safety" element={<Safety />} />
             <Route path="/logbook" element={<Logbook />} />
             <Route path="/about" element={<About />} />
@@ -48,6 +53,7 @@ function AppContent() {
         </div>
       </main>
       <Footer />
+      <BackToTop />
     </div>
   );
 }

@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "../styles/modern.css";
 import { useChemicals } from "../hooks/useChemicals";
+import { useRecentlyViewed } from "../hooks/useRecentlyViewed";
+import QRCodeModal from "../components/QRCodeModal";
+import ChemicalUsageHistory from "../components/ChemicalUsageHistory";
 
 const BASE = import.meta.env.BASE_URL || '/';
 
@@ -21,11 +24,13 @@ function ChemicalDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { chemicals, loading, error: hookError, updateChemical, deleteChemical } = useChemicals();
+  const { addToRecent } = useRecentlyViewed();
 
   const [chemical, setChemical] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [editForm, setEditForm] = useState(null);
   const [deleted, setDeleted] = useState(false);
+  const [showQR, setShowQR] = useState(false);
   const [alertMsg, setAlertMsg] = useState("");
   const [alertVariant, setAlertVariant] = useState("warning");
 
@@ -41,6 +46,7 @@ function ChemicalDetail() {
     const chem = chemicals.find(match);
     setChemical(chem || null);
     setEditForm(chem ? { ...chem } : null);
+    if (chem) addToRecent(chem);
   }, [id, chemicals, loading]);
 
   const handleEditClick = () => {
@@ -152,16 +158,44 @@ function ChemicalDetail() {
     <div className="app-container">
       <div className="page-header">
         <div className="header-content d-flex align-items-center justify-content-between flex-wrap gap-2">
-          <button
-            type="button"
-            className="btn btn-outline-primary btn-sm"
-            onClick={() => navigate(-1)}
-          >
-            &larr; Back
-          </button>
-          <h1 className="section-title mb-0">
-            {editMode ? editForm["Chemical Name"] : chemical["Chemical Name"] || chemical.title}
-          </h1>
+          <div className="d-flex align-items-center gap-2">
+            <button
+              type="button"
+              className="btn btn-outline-primary btn-sm"
+              onClick={() => navigate(-1)}
+            >
+              &larr; Back
+            </button>
+            <h1 className="section-title mb-0">
+              {editMode ? editForm["Chemical Name"] : chemical["Chemical Name"] || chemical.title}
+            </h1>
+          </div>
+          <div className="d-flex gap-2">
+            <button
+              className="btn btn-outline-primary btn-sm"
+              onClick={() => setShowQR(true)}
+            >
+              📷 QR Code
+            </button>
+            <button
+              className="btn btn-outline-primary btn-sm"
+              onClick={() => window.print()}
+            >
+              🖨️ Print
+            </button>
+            <button
+              className="btn btn-outline-primary btn-sm"
+              onClick={handleEditClick}
+            >
+              Edit
+            </button>
+            <button
+              className="btn btn-danger btn-sm"
+              onClick={handleDelete}
+            >
+              Delete
+            </button>
+          </div>
         </div>
       </div>
 
@@ -460,6 +494,56 @@ function ChemicalDetail() {
           )}
         </div>
       </div>
+      <CollapsibleSection title="Inventory Status" isOpen={true}>
+        <div className="row g-3">
+          <div className="col-md-6">
+            <div className="p-3 border rounded bg-light">
+              <div className="text-muted small mb-1">Current Quantity</div>
+              <div className="fs-4 fw-bold">
+                {chemical.inventory?.quantity || 0} {chemical.inventory?.unit || 'g'}
+              </div>
+              {chemical.inventory?.lowStockThreshold > 0 &&
+                (chemical.inventory?.quantity || 0) <= chemical.inventory.lowStockThreshold && (
+                  <div className="badge bg-danger mt-2">Low Stock Alert</div>
+                )}
+            </div>
+          </div>
+          <div className="col-md-6">
+            <div className="p-3 border rounded bg-light">
+              <div className="text-muted small mb-1">Location</div>
+              <div className="fs-5">{chemical.inventory?.location || 'Not assigned'}</div>
+            </div>
+          </div>
+          <div className="col-md-6">
+            <div className="p-3 border rounded bg-light">
+              <div className="text-muted small mb-1">Expiration Date</div>
+              <div className={`fs-5 ${chemical.inventory?.expirationDate && new Date(chemical.inventory.expirationDate) < new Date() ? 'text-danger fw-bold' : ''}`}>
+                {chemical.inventory?.expirationDate ? new Date(chemical.inventory.expirationDate).toLocaleDateString() : 'N/A'}
+                {chemical.inventory?.expirationDate && new Date(chemical.inventory.expirationDate) < new Date() && (
+                  <span className="badge bg-danger ms-2">Expired</span>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="col-md-6">
+            <div className="p-3 border rounded bg-light">
+              <div className="text-muted small mb-1">Last Updated</div>
+              <div className="fs-5">{new Date(chemical.dateAdded || Date.now()).toLocaleDateString()}</div>
+            </div>
+          </div>
+        </div>
+      </CollapsibleSection>
+
+      <CollapsibleSection title="Usage History">
+        <ChemicalUsageHistory chemicalId={chemical.id} />
+      </CollapsibleSection>
+
+      <QRCodeModal
+        show={showQR}
+        onClose={() => setShowQR(false)}
+        chemical={chemical}
+        url={window.location.href}
+      />
     </div>
   );
 }

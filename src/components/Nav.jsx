@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import ThemeToggle from "./ThemeToggle";
 
 function Nav({ searchValue, onSearchChange, showSearch = false }) {
   const location = useLocation();
@@ -101,6 +102,15 @@ function Nav({ searchValue, onSearchChange, showSearch = false }) {
             </li>
             <li className="nav-item">
               <Link
+                className={`nav-link ${location.pathname === '/calculators' ? 'active' : ''}`}
+                to="/calculators"
+                onClick={() => setOpen(false)}
+              >
+                Calculators
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link
                 className={`nav-link ${location.pathname === '/safety' ? 'active' : ''}`}
                 to="/safety"
                 onClick={() => setOpen(false)}
@@ -152,6 +162,9 @@ function Nav({ searchValue, onSearchChange, showSearch = false }) {
               >
                 About
               </Link>
+            </li>
+            <li className="nav-item">
+              <ThemeToggle />
             </li>
           </ul>
         </div>

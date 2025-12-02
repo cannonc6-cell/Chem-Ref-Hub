@@ -25,7 +25,13 @@ function AddChemical() {
 		"Safety Notes": "",
 		"Lab Use Notes": "",
 		"SDS Link": "",
+		"SDS Link": "",
 		categories: [],
+		quantity: "",
+		unit: "g",
+		location: "",
+		expirationDate: "",
+		lowStockThreshold: "",
 	});
 	const [error, setError] = useState("");
 
@@ -58,7 +64,17 @@ function AddChemical() {
 		}
 
 		try {
-			const toSave = { ...form, id: form.CAS || form["Chemical Name"] };
+			const toSave = {
+				...form,
+				id: form.CAS || form["Chemical Name"],
+				inventory: {
+					quantity: parseFloat(form.quantity) || 0,
+					unit: form.unit,
+					location: form.location,
+					expirationDate: form.expirationDate,
+					lowStockThreshold: parseFloat(form.lowStockThreshold) || 0
+				}
+			};
 			addChemical(toSave);
 			alert('Chemical added to your local list.');
 			navigate("/chemicals");
@@ -216,6 +232,74 @@ function AddChemical() {
 								value={form["SDS Link"]}
 								onChange={handleChange}
 								placeholder="Paste SDS URL (optional)"
+							/>
+						</div>
+
+						<div className="col-12"><hr className="my-4" /></div>
+						<div className="col-12"><h5 className="mb-3">Inventory Details</h5></div>
+
+						<div className="col-md-4">
+							<label htmlFor="quantity" className="form-label">Quantity</label>
+							<input
+								type="number"
+								className="form-control"
+								id="quantity"
+								name="quantity"
+								value={form.quantity}
+								onChange={handleChange}
+								step="any"
+							/>
+						</div>
+						<div className="col-md-4">
+							<label htmlFor="unit" className="form-label">Unit</label>
+							<select
+								className="form-select"
+								id="unit"
+								name="unit"
+								value={form.unit}
+								onChange={handleChange}
+							>
+								<option value="g">g</option>
+								<option value="kg">kg</option>
+								<option value="mL">mL</option>
+								<option value="L">L</option>
+								<option value="mg">mg</option>
+							</select>
+						</div>
+						<div className="col-md-4">
+							<label htmlFor="location" className="form-label">Location</label>
+							<input
+								type="text"
+								className="form-control"
+								id="location"
+								name="location"
+								value={form.location}
+								onChange={handleChange}
+								placeholder="e.g. Cabinet A, Shelf 2"
+							/>
+						</div>
+
+						<div className="col-md-6">
+							<label htmlFor="expirationDate" className="form-label">Expiration Date</label>
+							<input
+								type="date"
+								className="form-control"
+								id="expirationDate"
+								name="expirationDate"
+								value={form.expirationDate}
+								onChange={handleChange}
+							/>
+						</div>
+						<div className="col-md-6">
+							<label htmlFor="lowStockThreshold" className="form-label">Low Stock Alert Threshold</label>
+							<input
+								type="number"
+								className="form-control"
+								id="lowStockThreshold"
+								name="lowStockThreshold"
+								value={form.lowStockThreshold}
+								onChange={handleChange}
+								placeholder="Alert when quantity below..."
 							/>
 						</div>
 						<div className="col-md-6">

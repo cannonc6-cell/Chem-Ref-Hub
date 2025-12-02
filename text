@@ -1,0 +1,35 @@
+Potential Enhancements
+1. Visual & UX Improvements
+Dark Mode Toggle - Add a light/dark theme switcher
+Loading Skeletons - Show skeleton screens while data loads instead of plain "Loading..."
+Empty States - Add illustrations or better messaging for empty states
+Toast Notifications - Replace alerts with modern toast notifications
+Image Zoom - Click to zoom chemical structure images
+Sorting Options - Sort chemicals by name, formula, or recently added
+2. Functionality Enhancements
+Advanced Search - Search by formula, CAS number, or properties (not just name)
+Bulk Operations - Select multiple chemicals to export or delete
+Chemical Comparison - Compare properties of 2-3 chemicals side-by-side
+Print View - Optimized print layout for chemical details
+QR Code Generation - Generate QR codes for chemical details (useful for lab labels)
+Chemical Calculator - Molecular weight calculator, dilution calculator
+3. Data & Organization
+Categories/Collections - Group chemicals into custom collections
+Recent Activity - Show recently viewed chemicals
+Notes System - Add personal notes to chemicals
+Related Chemicals - Show similar or related chemicals
+Data Validation - Better form validation with helpful error messages
+4. Progressive Web App (PWA)
+Offline Mode - Work without internet connection
+Install Prompt - Add "Install App" button
+Push Notifications - Reminders for chemical inventory checks
+5. Accessibility & Performance
+Keyboard Shortcuts - Quick navigation (e.g., / to focus search)
+Screen Reader Improvements - Better ARIA labels
+Performance Optimization - Lazy loading, code splitting
+Export Options - Export to PDF, CSV, or Excel
+6. Lab-Specific Features
+Inventory Tracking - Track quantities and locations
+Expiration Dates - Alert for chemicals nearing expiration
+Safety Checklists - Pre-use safety checklists
+Barcode Scanner - Scan chemical barcodes (using device camera)
