@@ -8,9 +8,12 @@ import './index.css';
 import './styles/modern.css';  // Add our modern styles last to override Bootstrap
 import '../dark-mode.css'; // Import dark mode styles
 import App from './App.jsx';
+import { AuthProvider } from './context/AuthContext.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <App />
+    <AuthProvider>
+      <App />
+    </AuthProvider>
   </StrictMode>
 );

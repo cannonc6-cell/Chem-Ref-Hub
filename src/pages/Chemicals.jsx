@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import jsPDF from 'jspdf';
 import '../styles/modern.css';
 import '../index.css';
 import { useChemicals } from '../hooks/useChemicals';
 import { useCompare } from '../hooks/useCompare';
 import CompareModal from '../components/CompareModal';
 import SkeletonCard from '../components/SkeletonCard';
+import BarcodeScanner from '../components/BarcodeScanner';
 
 const BASE = import.meta.env.BASE_URL || '/';
 
@@ -33,6 +35,9 @@ function Chemicals() {
 	const [alertMsg, setAlertMsg] = useState("");
 	const [alertVariant, setAlertVariant] = useState("success");
 	const [mergeImport, setMergeImport] = useState(true);
+	const [exportFormat, setExportFormat] = useState('csv'); // csv, json, pdf, excel
+	const [exportScope, setExportScope] = useState('filtered'); // filtered, favorites, selected
+	const [showScanner, setShowScanner] = useState(false);
 
 	// Extract tags from the loaded chemicals
 	const allTags = useMemo(() => extractTags(chemicals), [chemicals]);
@@ -91,9 +96,28 @@ function Chemicals() {
 		return () => window.removeEventListener('keydown', handleKeyDown);
 	}, []);
 
+	// Helper to get chemicals for export based on scope
+	const getExportChemicals = () => {
+		if (exportScope === 'favorites') {
+			return chemicals.filter(c => favorites.includes(c.id));
+		}
+		if (exportScope === 'selected') {
+			return chemicals.filter(c => selectedChemicals.has(c.id));
+		}
+		// default: filtered list
+		return filteredChemicals;
+	};
+
 	// Export chemicals as JSON
 	const handleExportJSON = () => {
-		const dataStr = JSON.stringify(chemicals, null, 2);
+		const exportList = getExportChemicals();
+		if (!exportList.length) {
+			setAlertVariant('warning');
+			setAlertMsg('No chemicals to export for the chosen options.');
+			return;
+		}
+
+		const dataStr = JSON.stringify(exportList, null, 2);
 		const blob = new Blob([dataStr], { type: 'application/json' });
 		const url = URL.createObjectURL(blob);
 		const a = document.createElement('a');
@@ -107,9 +131,10 @@ function Chemicals() {
 
 	// Export chemicals as CSV
 	const handleExportCSV = () => {
-		if (filteredChemicals.length === 0) {
+		const exportList = getExportChemicals();
+		if (!exportList.length) {
 			setAlertVariant('warning');
-			setAlertMsg('No chemicals to export.');
+			setAlertMsg('No chemicals to export for the chosen options.');
 			return;
 		}
 
@@ -117,7 +142,7 @@ function Chemicals() {
 		const headers = ['Name', 'Formula', 'CAS', 'Appearance', 'Tags'];
 
 		// Convert data to CSV rows
-		const rows = filteredChemicals.map(chem => {
+		const rows = exportList.map(chem => {
 			return [
 				`"${(chem.name || '').replace(/"/g, '""')}"`,
 				`"${(chem.formula || '').replace(/"/g, '""')}"`,
@@ -136,7 +161,91 @@ function Chemicals() {
 		a.click();
 		URL.revokeObjectURL(url);
 		setAlertVariant('success');
-		setAlertMsg(`Exported ${filteredChemicals.length} chemicals as CSV.`);
+		setAlertMsg(`Exported ${exportList.length} chemicals as CSV.`);
+	};
+
+	// Export chemicals as Excel-compatible CSV (.xls)
+	const handleExportExcel = () => {
+		const exportList = getExportChemicals();
+		if (!exportList.length) {
+			setAlertVariant('warning');
+			setAlertMsg('No chemicals to export for the chosen options.');
+			return;
+		}
+
+		// Define headers
+		const headers = ['Name', 'Formula', 'CAS', 'Appearance', 'Tags'];
+
+		// Convert data to CSV rows
+		const rows = exportList.map(chem => {
+			return [
+				`"${(chem.name || '').replace(/"/g, '""')}"`,
+				`"${(chem.formula || '').replace(/"/g, '""')}"`,
+				`"${(chem.CAS || '').replace(/"/g, '""')}"`,
+				`"${(chem.appearance || '').replace(/"/g, '""')}"`,
+				`"${(Array.isArray(chem.tags) ? chem.tags.join(', ') : '').replace(/"/g, '""')}"`
+			].join(',');
+		});
+
+		const csvContent = [headers.join(','), ...rows].join('\n');
+		const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = 'chemical_data_export.xls'; // Excel-compatible
+		a.click();
+		URL.revokeObjectURL(url);
+		setAlertVariant('success');
+		setAlertMsg(`Exported ${exportList.length} chemicals as Excel-compatible file.`);
+	};
+
+	// Export chemicals as PDF
+	const handleExportPDF = () => {
+		const exportList = getExportChemicals();
+		if (!exportList.length) {
+			setAlertVariant('warning');
+			setAlertMsg('No chemicals to export for the chosen options.');
+			return;
+		}
+
+		const doc = new jsPDF({ orientation: 'landscape' });
+		const headers = ['Name', 'Formula', 'CAS', 'Appearance', 'Tags'];
+		const rows = exportList.map(chem => [
+			chem.name || '',
+			chem.formula || '',
+			chem.CAS || '',
+			chem.appearance || '',
+			Array.isArray(chem.tags) ? chem.tags.join(', ') : ''
+		]);
+
+		let x = 10;
+		let y = 15;
+		const lineHeight = 7;
+		const maxWidth = doc.internal.pageSize.getWidth() - 20;
+
+		// Simple header row
+		doc.setFontSize(12);
+		doc.text('ChemRef Hub - Chemical Export', 10, 10);
+		doc.setFontSize(10);
+		doc.text(headers.join(' | '), x, y);
+		y += lineHeight;
+
+		rows.forEach(row => {
+			const line = row.join(' | ');
+			const split = doc.splitTextToSize(line, maxWidth);
+			if (y + split.length * lineHeight > doc.internal.pageSize.getHeight() - 10) {
+				doc.addPage();
+				y = 15;
+			}
+			split.forEach(l => {
+				doc.text(l, x, y);
+				y += lineHeight;
+			});
+		});
+
+		doc.save('chemical_data_export.pdf');
+		setAlertVariant('success');
+		setAlertMsg(`Exported ${exportList.length} chemicals as PDF.`);
 	};
 
 	// Toggle selection of a chemical
@@ -273,6 +382,28 @@ function Chemicals() {
 
 	return (
 		<div className="app-container">
+			{showScanner && (
+				<BarcodeScanner
+					onDetected={(code) => {
+						// Try to find a chemical by CAS or id matching the scanned code
+						const lower = code.toLowerCase();
+						const match = chemicals.find(c =>
+							(String(c.CAS || '')).toLowerCase() === lower ||
+							(String(c.id || '')).toLowerCase() === lower
+						);
+						if (match) {
+							setSearchTerm(match.CAS || match.id || '');
+							setAlertVariant('success');
+							setAlertMsg(`Found chemical for code: ${code}`);
+						} else {
+							setAlertVariant('warning');
+							setAlertMsg(`No chemical found for code: ${code}`);
+						}
+						setShowScanner(false);
+					}}
+					onClose={() => setShowScanner(false)}
+				/>
+			)}
 			{alertMsg && (
 				<div className={`alert alert-${alertVariant} d-flex justify-content-between align-items-center`} role="alert">
 					<span>{alertMsg}</span>
@@ -322,6 +453,19 @@ function Chemicals() {
 					</select>
 				</div>
 				<div className="action-buttons">
+					<div className="form-check form-switch me-2">
+						<input
+							className="form-check-input"
+							id="favoritesOnlyToggle"
+							type="checkbox"
+							role="switch"
+							checked={favoritesOnly}
+							onChange={() => setFavoritesOnly(!favoritesOnly)}
+						/>
+						<label className="form-check-label" htmlFor="favoritesOnlyToggle">
+							Favorites only
+						</label>
+					</div>
 					<button
 						className={`btn ${isSelectionMode ? 'btn-primary' : 'btn-outline-primary'}`}
 						onClick={toggleSelectionMode}
@@ -349,14 +493,54 @@ function Chemicals() {
 							>
 								{favoritesOnly ? '⭐ Favorites' : '☆ Show Favorites'}
 							</button>
+							<button
+								className="btn btn-outline-secondary"
+								type="button"
+								onClick={() => setShowScanner(true)}
+							>
+								Scan Barcode
+							</button>
+							<div className="d-flex align-items-center gap-2">
+								<select
+									className="form-select form-select-sm"
+									value={exportFormat}
+									onChange={(e) => setExportFormat(e.target.value)}
+									aria-label="Select export format"
+								>
+									<option value="csv">CSV</option>
+									<option value="json">JSON</option>
+									<option value="pdf">PDF</option>
+									<option value="excel">Excel</option>
+								</select>
+								<select
+									className="form-select form-select-sm"
+									value={exportScope}
+									onChange={(e) => setExportScope(e.target.value)}
+									aria-label="Select which chemicals to export"
+								>
+									<option value="filtered">Filtered list</option>
+									<option value="favorites">Favorites only</option>
+									<option value="selected">Selected only</option>
+								</select>
+							</div>
 							<div className="btn-group">
-								<button className="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<button
+									className="btn btn-outline-primary"
+									type="button"
+									onClick={() => {
+										if (exportFormat === 'json') {
+											handleExportJSON();
+										} else if (exportFormat === 'pdf') {
+											handleExportPDF();
+										} else if (exportFormat === 'excel') {
+											handleExportExcel();
+										} else {
+											handleExportCSV();
+										}
+									}}
+								>
 									Export
 								</button>
-								<ul className="dropdown-menu">
-									<li><button className="dropdown-item" onClick={handleExportJSON}>Export JSON</button></li>
-									<li><button className="dropdown-item" onClick={handleExportCSV}>Export CSV</button></li>
-								</ul>
 							</div>
 							<label className="btn btn-outline-primary" style={{ cursor: 'pointer', margin: 0 }}>
 								Import JSON

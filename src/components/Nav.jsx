@@ -1,10 +1,25 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import ThemeToggle from "./ThemeToggle";
+import { useAuth } from "../context/AuthContext";
 
 function Nav({ searchValue, onSearchChange, showSearch = false }) {
   const location = useLocation();
   const [open, setOpen] = useState(false);
+  const { user, authLoading, signInWithGoogle, signOutUser } = useAuth();
+
+  // Keyboard shortcut: Alt+M to toggle mobile menu
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.altKey && (e.key === 'm' || e.key === 'M')) {
+        e.preventDefault();
+        setOpen((prev) => !prev);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   return (
     <nav className="navbar navbar-expand-lg fixed-top" style={{
@@ -166,6 +181,32 @@ function Nav({ searchValue, onSearchChange, showSearch = false }) {
             <li className="nav-item">
               <ThemeToggle />
             </li>
+            {!authLoading && (
+              <li className="nav-item ms-2 d-flex align-items-center">
+                {user ? (
+                  <>
+                    <span className="nav-link disabled" style={{ opacity: 0.8 }}>
+                      {user.displayName || user.email}
+                    </span>
+                    <button
+                      type="button"
+                      className="btn btn-sm btn-outline-light ms-1"
+                      onClick={signOutUser}
+                    >
+                      Sign out
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline-light ms-1"
+                    onClick={signInWithGoogle}
+                  >
+                    Sign in with Google
+                  </button>
+                )}
+              </li>
+            )}
           </ul>
         </div>
       </div>
