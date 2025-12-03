@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import '../styles/modern.css';
+import React, { useState, useEffect } from 'react';
 
 function MolecularWeightCalculator() {
     const [formula, setFormula] = useState('');
@@ -31,14 +30,9 @@ function MolecularWeightCalculator() {
 
         try {
             let currentFormula = formula.trim();
-            // Simple parser for demonstration (handles basic elements and numbers, no parentheses yet for simplicity)
-            // A more robust parser would be needed for complex formulas with parentheses
-
-            // Regex to match Element + Count
             const regex = /([A-Z][a-z]*)(\d*)/g;
             let match;
             let totalWeight = 0;
-            let parsedElements = [];
             let lastIndex = 0;
 
             while ((match = regex.exec(currentFormula)) !== null) {
@@ -50,15 +44,12 @@ function MolecularWeightCalculator() {
                 }
 
                 totalWeight += atomicWeights[element] * count;
-                parsedElements.push(`${element}${count > 1 ? count : ''}`);
                 lastIndex = match.index + match[0].length;
             }
 
             if (lastIndex !== currentFormula.length) {
-                // Check for parentheses or invalid chars
                 if (currentFormula.includes('(') || currentFormula.includes(')')) {
-                    // Basic parenthesis handling could be added here, but for now:
-                    throw new Error('Complex formulas with parentheses are not yet supported in this version.');
+                    throw new Error('Complex formulas with parentheses are not yet supported.');
                 }
                 throw new Error('Invalid characters in formula');
             }
@@ -72,35 +63,45 @@ function MolecularWeightCalculator() {
     };
 
     return (
-        <div className="card shadow-sm">
-            <div className="card-header bg-white">
-                <h5 className="mb-0">Molecular Weight Calculator</h5>
+        <div style={{
+            backgroundColor: 'var(--surface)',
+            borderRadius: 'var(--radius-lg)',
+            border: '1px solid var(--border-light)',
+            padding: '1.5rem',
+            height: '100%'
+        }}>
+            <h3 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '1rem', color: 'var(--text-primary)' }}>
+                Molecular Weight Calculator
+            </h3>
+            <div className="mb-3">
+                <label className="form-label" style={{ fontSize: '0.875rem', fontWeight: 500 }}>Chemical Formula</label>
+                <input
+                    type="text"
+                    className="form-control"
+                    placeholder="e.g. H2O, C6H12O6"
+                    value={formula}
+                    onChange={(e) => setFormula(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && calculateWeight()}
+                />
+                <div className="form-text">Case sensitive (e.g. NaCl)</div>
             </div>
-            <div className="card-body">
-                <div className="mb-3">
-                    <label htmlFor="formulaInput" className="form-label">Chemical Formula</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="formulaInput"
-                        placeholder="e.g. H2O, C6H12O6, NaCl"
-                        value={formula}
-                        onChange={(e) => setFormula(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && calculateWeight()}
-                    />
-                    <div className="form-text">Enter elements with correct capitalization (e.g. NaCl, not nacl).</div>
-                </div>
-                <button className="btn btn-primary w-100" onClick={calculateWeight}>Calculate</button>
+            <button className="btn btn-primary w-100 mb-3" onClick={calculateWeight}>Calculate</button>
 
-                {error && <div className="alert alert-danger mt-3 mb-0">{error}</div>}
+            {error && <div className="alert alert-danger mb-0 py-2">{error}</div>}
 
-                {result && (
-                    <div className="alert alert-success mt-3 mb-0 text-center">
-                        <div className="small text-muted mb-1">Molar Mass</div>
-                        <div className="fs-2 fw-bold">{result} <span className="fs-5 fw-normal">g/mol</span></div>
+            {result && (
+                <div style={{
+                    backgroundColor: 'var(--bg-secondary)',
+                    padding: '1rem',
+                    borderRadius: 'var(--radius-md)',
+                    textAlign: 'center'
+                }}>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Molar Mass</div>
+                    <div style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--primary)' }}>
+                        {result} <span style={{ fontSize: '1rem', fontWeight: 400, color: 'var(--text-primary)' }}>g/mol</span>
                     </div>
-                )}
-            </div>
+                </div>
+            )}
         </div>
     );
 }
@@ -118,7 +119,6 @@ function DilutionCalculator() {
         const valC2 = parseFloat(c2);
         const valV2 = parseFloat(v2);
 
-        // Check which value is missing
         if (!c1 && v1 && c2 && v2) {
             setResult(`Initial Concentration (C1) = ${(valC2 * valV2 / valV1).toFixed(3)}`);
         } else if (c1 && !v1 && c2 && v2) {
@@ -128,54 +128,54 @@ function DilutionCalculator() {
         } else if (c1 && v1 && c2 && !v2) {
             setResult(`Final Volume (V2) = ${(valC1 * valV1 / valC2).toFixed(3)}`);
         } else {
-            setResult('Please enter exactly 3 values to calculate the 4th.');
+            setResult('Please enter exactly 3 values.');
         }
     };
 
     const clear = () => {
-        setC1('');
-        setV1('');
-        setC2('');
-        setV2('');
-        setResult('');
+        setC1(''); setV1(''); setC2(''); setV2(''); setResult('');
     };
 
     return (
-        <div className="card shadow-sm h-100">
-            <div className="card-header bg-white">
-                <h5 className="mb-0">Dilution Calculator (C₁V₁ = C₂V₂)</h5>
-            </div>
-            <div className="card-body">
-                <div className="row g-3">
-                    <div className="col-6">
-                        <label className="form-label">Initial Conc. (C₁)</label>
-                        <input type="number" className="form-control" value={c1} onChange={(e) => setC1(e.target.value)} placeholder="C₁" />
-                    </div>
-                    <div className="col-6">
-                        <label className="form-label">Initial Vol. (V₁)</label>
-                        <input type="number" className="form-control" value={v1} onChange={(e) => setV1(e.target.value)} placeholder="V₁" />
-                    </div>
-                    <div className="col-6">
-                        <label className="form-label">Final Conc. (C₂)</label>
-                        <input type="number" className="form-control" value={c2} onChange={(e) => setC2(e.target.value)} placeholder="C₂" />
-                    </div>
-                    <div className="col-6">
-                        <label className="form-label">Final Vol. (V₂)</label>
-                        <input type="number" className="form-control" value={v2} onChange={(e) => setV2(e.target.value)} placeholder="V₂" />
-                    </div>
+        <div style={{
+            backgroundColor: 'var(--surface)',
+            borderRadius: 'var(--radius-lg)',
+            border: '1px solid var(--border-light)',
+            padding: '1.5rem',
+            height: '100%'
+        }}>
+            <h3 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '1rem', color: 'var(--text-primary)' }}>
+                Dilution Calculator (C₁V₁ = C₂V₂)
+            </h3>
+            <div className="row g-2 mb-3">
+                <div className="col-6">
+                    <label className="form-label small">Initial Conc. (C₁)</label>
+                    <input type="number" className="form-control" value={c1} onChange={(e) => setC1(e.target.value)} placeholder="C₁" />
                 </div>
-
-                <div className="d-flex gap-2 mt-3">
-                    <button className="btn btn-primary flex-grow-1" onClick={calculate}>Calculate</button>
-                    <button className="btn btn-outline-secondary" onClick={clear}>Clear</button>
+                <div className="col-6">
+                    <label className="form-label small">Initial Vol. (V₁)</label>
+                    <input type="number" className="form-control" value={v1} onChange={(e) => setV1(e.target.value)} placeholder="V₁" />
                 </div>
-
-                {result && (
-                    <div className={`alert mt-3 mb-0 text-center ${result.includes('Please') ? 'alert-warning' : 'alert-success'}`}>
-                        <div className="fw-bold">{result}</div>
-                    </div>
-                )}
+                <div className="col-6">
+                    <label className="form-label small">Final Conc. (C₂)</label>
+                    <input type="number" className="form-control" value={c2} onChange={(e) => setC2(e.target.value)} placeholder="C₂" />
+                </div>
+                <div className="col-6">
+                    <label className="form-label small">Final Vol. (V₂)</label>
+                    <input type="number" className="form-control" value={v2} onChange={(e) => setV2(e.target.value)} placeholder="V₂" />
+                </div>
             </div>
+
+            <div className="d-flex gap-2 mb-3">
+                <button className="btn btn-primary flex-grow-1" onClick={calculate}>Calculate</button>
+                <button className="btn btn-outline-secondary" onClick={clear}>Clear</button>
+            </div>
+
+            {result && (
+                <div className={`alert mb-0 text-center py-2 ${result.includes('Please') ? 'alert-warning' : 'alert-success'}`}>
+                    <div className="fw-bold small">{result}</div>
+                </div>
+            )}
         </div>
     );
 }
@@ -192,8 +192,6 @@ function ConcentrationConverter() {
         const w = parseFloat(mw);
 
         if (m && v && w) {
-            // Molarity = (Mass / MW) / Volume(L)
-            // Assuming Volume is in mL, so convert to L: v / 1000
             const mol = (m / w) / (v / 1000);
             setMolarity(mol.toFixed(4));
         } else {
@@ -202,33 +200,44 @@ function ConcentrationConverter() {
     };
 
     return (
-        <div className="card shadow-sm h-100">
-            <div className="card-header bg-white">
-                <h5 className="mb-0">Molarity Converter</h5>
+        <div style={{
+            backgroundColor: 'var(--surface)',
+            borderRadius: 'var(--radius-lg)',
+            border: '1px solid var(--border-light)',
+            padding: '1.5rem',
+            height: '100%'
+        }}>
+            <h3 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '1rem', color: 'var(--text-primary)' }}>
+                Molarity Converter
+            </h3>
+            <div className="mb-2">
+                <label className="form-label small">Mass (g)</label>
+                <input type="number" className="form-control" value={mass} onChange={(e) => setMass(e.target.value)} />
             </div>
-            <div className="card-body">
-                <div className="mb-3">
-                    <label className="form-label">Mass (g)</label>
-                    <input type="number" className="form-control" value={mass} onChange={(e) => setMass(e.target.value)} />
-                </div>
-                <div className="mb-3">
-                    <label className="form-label">Volume (mL)</label>
-                    <input type="number" className="form-control" value={vol} onChange={(e) => setVol(e.target.value)} />
-                </div>
-                <div className="mb-3">
-                    <label className="form-label">Molecular Weight (g/mol)</label>
-                    <input type="number" className="form-control" value={mw} onChange={(e) => setMw(e.target.value)} />
-                </div>
+            <div className="mb-2">
+                <label className="form-label small">Volume (mL)</label>
+                <input type="number" className="form-control" value={vol} onChange={(e) => setVol(e.target.value)} />
+            </div>
+            <div className="mb-3">
+                <label className="form-label small">Molecular Weight (g/mol)</label>
+                <input type="number" className="form-control" value={mw} onChange={(e) => setMw(e.target.value)} />
+            </div>
 
-                <button className="btn btn-primary w-100 mb-3" onClick={calculate}>Calculate Molarity</button>
+            <button className="btn btn-primary w-100 mb-3" onClick={calculate}>Calculate Molarity</button>
 
-                {molarity !== null && (
-                    <div className="alert alert-success text-center mb-0">
-                        <div className="small text-muted">Concentration</div>
-                        <div className="fs-3 fw-bold">{molarity} M</div>
+            {molarity !== null && (
+                <div style={{
+                    backgroundColor: 'var(--bg-secondary)',
+                    padding: '1rem',
+                    borderRadius: 'var(--radius-md)',
+                    textAlign: 'center'
+                }}>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Concentration</div>
+                    <div style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--primary)' }}>
+                        {molarity} <span style={{ fontSize: '1rem', fontWeight: 400, color: 'var(--text-primary)' }}>M</span>
                     </div>
-                )}
-            </div>
+                </div>
+            )}
         </div>
     );
 }
@@ -248,60 +257,69 @@ function PHCalculator() {
     };
 
     return (
-        <div className="card shadow-sm h-100">
-            <div className="card-header bg-white">
-                <h5 className="mb-0">pH Calculator</h5>
+        <div style={{
+            backgroundColor: 'var(--surface)',
+            borderRadius: 'var(--radius-lg)',
+            border: '1px solid var(--border-light)',
+            padding: '1.5rem',
+            height: '100%'
+        }}>
+            <h3 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '1rem', color: 'var(--text-primary)' }}>
+                pH Calculator
+            </h3>
+            <div className="mb-3">
+                <label className="form-label small">[H+] Concentration (M)</label>
+                <input
+                    type="number"
+                    className="form-control"
+                    value={hIon}
+                    onChange={(e) => setHIon(e.target.value)}
+                    placeholder="e.g. 0.001"
+                    step="any"
+                />
             </div>
-            <div className="card-body">
-                <div className="mb-3">
-                    <label className="form-label">[H+] Concentration (M)</label>
-                    <input
-                        type="number"
-                        className="form-control"
-                        value={hIon}
-                        onChange={(e) => setHIon(e.target.value)}
-                        placeholder="e.g. 0.001"
-                        step="any"
-                    />
-                </div>
 
-                <button className="btn btn-primary w-100 mb-3" onClick={calculate}>Calculate pH</button>
+            <button className="btn btn-primary w-100 mb-3" onClick={calculate}>Calculate pH</button>
 
-                {ph !== null && (
-                    <div className={`alert text-center mb-0 ${ph < 7 ? 'alert-danger' : ph > 7 ? 'alert-primary' : 'alert-success'}`}>
-                        <div className="small text-muted">pH Value</div>
-                        <div className="fs-3 fw-bold">{ph}</div>
-                        <div className="small">{ph < 7 ? 'Acidic' : ph > 7 ? 'Basic' : 'Neutral'}</div>
+            {ph !== null && (
+                <div style={{
+                    backgroundColor: 'var(--bg-secondary)',
+                    padding: '1rem',
+                    borderRadius: 'var(--radius-md)',
+                    textAlign: 'center'
+                }}>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>pH Value</div>
+                    <div style={{ fontSize: '1.5rem', fontWeight: 700, color: ph < 7 ? 'var(--error)' : ph > 7 ? 'var(--primary)' : 'var(--success)' }}>
+                        {ph}
                     </div>
-                )}
-            </div>
+                    <div className="small text-muted">{ph < 7 ? 'Acidic' : ph > 7 ? 'Basic' : 'Neutral'}</div>
+                </div>
+            )}
         </div>
     );
 }
 
 function Calculators() {
+    useEffect(() => {
+        document.title = 'Calculators – ChemRef Hub';
+    }, []);
+
     return (
-        <div className="app-container">
-            <div className="page-header">
-                <div className="header-content">
-                    <h1 className="section-title">Lab Calculators</h1>
-                </div>
-                <p className="lead mb-0">Essential tools for chemical calculations.</p>
+        <div className="calculators-page" style={{ maxWidth: '1200px', margin: '0 auto' }}>
+            <div style={{ marginBottom: '2rem' }}>
+                <h1 style={{ fontSize: '1.875rem', fontWeight: 700, marginBottom: '0.5rem' }}>Lab Calculators</h1>
+                <p style={{ color: 'var(--text-secondary)' }}>Essential tools for common chemical calculations and conversions.</p>
             </div>
 
-            <div className="row g-4">
-                <div className="col-12 col-md-6 col-lg-4">
-                    <MolecularWeightCalculator />
-                </div>
-                <div className="col-12 col-md-6 col-lg-4">
-                    <DilutionCalculator />
-                </div>
-                <div className="col-12 col-md-6 col-lg-4">
-                    <ConcentrationConverter />
-                </div>
-                <div className="col-12 col-md-6 col-lg-4">
-                    <PHCalculator />
-                </div>
+            <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                gap: '1.5rem'
+            }}>
+                <MolecularWeightCalculator />
+                <DilutionCalculator />
+                <ConcentrationConverter />
+                <PHCalculator />
             </div>
         </div>
     );

@@ -1,15 +1,80 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/modern.css";
+import toast from 'react-hot-toast';
 import { useChemicals } from "../hooks/useChemicals";
 
 const CATEGORY_OPTIONS = [
 	"Acid", "Base", "Salt", "Solvent", "Oxidizer", "Reducer", "Fuel", "Metal", "Nonmetal", "Toxic", "Flammable", "Corrosive", "Explosive", "Inorganic", "Organic", "Laboratory", "Food Additive", "Fertilizer", "Pyrotechnic", "Cleaning Agent"
 ];
 
+// Reusable Accordion Section Component
+const FormSection = ({ title, isOpen, onToggle, children }) => {
+	return (
+		<div style={{
+			border: '1px solid var(--border-light)',
+			borderRadius: 'var(--radius-lg)',
+			marginBottom: '1rem',
+			backgroundColor: 'var(--surface)',
+			overflow: 'hidden'
+		}}>
+			<button
+				type="button"
+				onClick={onToggle}
+				style={{
+					width: '100%',
+					display: 'flex',
+					justifyContent: 'space-between',
+					alignItems: 'center',
+					padding: '1.25rem',
+					background: 'none',
+					border: 'none',
+					cursor: 'pointer',
+					textAlign: 'left'
+				}}
+			>
+				<h3 style={{ fontSize: '1.125rem', fontWeight: 600, margin: 0, color: 'var(--text-primary)' }}>{title}</h3>
+				<svg
+					width="20"
+					height="20"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke="currentColor"
+					style={{
+						transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+						transition: 'transform var(--transition-fast)',
+						color: 'var(--text-secondary)'
+					}}
+				>
+					<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+				</svg>
+			</button>
+
+			{isOpen && (
+				<div style={{ padding: '0 1.25rem 1.25rem 1.25rem', borderTop: '1px solid var(--border-light)' }}>
+					{children}
+				</div>
+			)}
+		</div>
+	);
+};
+
 function AddChemical() {
 	const navigate = useNavigate();
 	const { chemicals, addChemical } = useChemicals();
+
+	// Section visibility state
+	const [sections, setSections] = useState({
+		general: true,
+		identifiers: true,
+		properties: false,
+		hazards: false,
+		storage: false,
+		inventory: true
+	});
+
+	const toggleSection = (section) => {
+		setSections(prev => ({ ...prev, [section]: !prev[section] }));
+	};
 
 	const [form, setForm] = useState({
 		title: "",
@@ -25,7 +90,6 @@ function AddChemical() {
 		"Safety Notes": "",
 		"Lab Use Notes": "",
 		"SDS Link": "",
-		"SDS Link": "",
 		categories: [],
 		quantity: "",
 		unit: "g",
@@ -33,14 +97,13 @@ function AddChemical() {
 		expirationDate: "",
 		lowStockThreshold: "",
 	});
-	const [error, setError] = useState("");
 
 	useEffect(() => {
 		document.title = 'Add Chemical – ChemRef Hub';
 	}, []);
 
 	const handleChange = (e) => {
-		const { name, value, type, selectedOptions } = e.target;
+		const { name, value, selectedOptions } = e.target;
 		if (name === "categories") {
 			setForm({ ...form, categories: Array.from(selectedOptions, o => o.value) });
 		} else {
@@ -50,16 +113,15 @@ function AddChemical() {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		// Basic validation
+
 		if (!form["Chemical Name"] || !form.CAS) {
-			setError("Chemical Name and CAS # are required.");
+			toast.error("Chemical Name and CAS # are required.");
 			return;
 		}
 
-		// Check for duplicates using the hook's data
 		const exists = chemicals.some((c) => (c.CAS || '').toLowerCase() === (form.CAS || '').toLowerCase());
 		if (exists) {
-			setError('A chemical with this CAS already exists.');
+			toast.error('A chemical with this CAS already exists.');
 			return;
 		}
 
@@ -75,146 +137,198 @@ function AddChemical() {
 					lowStockThreshold: parseFloat(form.lowStockThreshold) || 0
 				}
 			};
+
 			addChemical(toSave);
-			alert('Chemical added to your local list.');
+			toast.success('Chemical added successfully.');
 			navigate("/chemicals");
 		} catch (err) {
 			console.error(err);
-			setError('Failed to save. Please try again.');
+			toast.error('Failed to save. Please try again.');
 		}
 	};
 
 	return (
-		<div className="app-container">
-			<div className="page-header">
-				<div className="header-content">
-					<h1 className="section-title">Add Chemical</h1>
-				</div>
+		<div className="add-chemical-page" style={{ maxWidth: '800px', margin: '0 auto' }}>
+			<div style={{ marginBottom: '2rem' }}>
+				<h1 style={{ fontSize: '1.875rem', fontWeight: 700, marginBottom: '0.5rem' }}>Add New Chemical Record</h1>
+				<p style={{ color: 'var(--text-secondary)' }}>
+					Input detailed information for a new chemical entry, including general data, properties, hazard information, and inventory details.
+				</p>
 			</div>
-			<div className="data-table-container" aria-labelledby="add-chemical-heading">
-				{error && (
-					<div className="alert alert-danger" role="alert">
-						{error}
-					</div>
-				)}
-				<form onSubmit={handleSubmit}>
+
+			<form onSubmit={handleSubmit}>
+				{/* General Information */}
+				<FormSection
+					title="General Information"
+					isOpen={sections.general}
+					onToggle={() => toggleSection('general')}
+				>
 					<div className="row g-3">
 						<div className="col-md-6">
-							<label className="form-label" htmlFor="chemical-name">Chemical Name *</label>
+							<label className="form-label fw-medium">Chemical Name *</label>
 							<input
-								id="chemical-name"
 								type="text"
 								className="form-control"
 								name="Chemical Name"
 								value={form["Chemical Name"]}
 								onChange={handleChange}
 								required
+								placeholder="e.g. Acetone"
 							/>
 						</div>
 						<div className="col-md-6">
-							<label className="form-label" htmlFor="cas-number">CAS # *</label>
+							<label className="form-label fw-medium">Formula</label>
 							<input
-								id="cas-number"
+								type="text"
+								className="form-control"
+								name="Formula"
+								value={form.Formula}
+								onChange={handleChange}
+								placeholder="e.g. C3H6O"
+							/>
+						</div>
+						<div className="col-12">
+							<label className="form-label fw-medium">Description</label>
+							<textarea
+								className="form-control"
+								name="Properties"
+								value={form.Properties}
+								onChange={handleChange}
+								rows="3"
+								placeholder="Brief description of the chemical and its uses."
+							/>
+						</div>
+					</div>
+				</FormSection>
+
+				{/* Identifiers */}
+				<FormSection
+					title="Identifiers"
+					isOpen={sections.identifiers}
+					onToggle={() => toggleSection('identifiers')}
+				>
+					<div className="row g-3">
+						<div className="col-md-6">
+							<label className="form-label fw-medium">CAS Number *</label>
+							<input
 								type="text"
 								className="form-control"
 								name="CAS"
 								value={form.CAS}
 								onChange={handleChange}
 								required
+								placeholder="e.g. 67-64-1"
 							/>
 						</div>
 						<div className="col-md-6">
-							<label className="form-label" htmlFor="formula">Formula</label>
+							<label className="form-label fw-medium">SDS Link</label>
 							<input
-								id="formula"
-								type="text"
+								type="url"
 								className="form-control"
-								name="Formula"
-								value={form.Formula}
+								name="SDS Link"
+								value={form["SDS Link"]}
 								onChange={handleChange}
+								placeholder="https://..."
 							/>
 						</div>
+					</div>
+				</FormSection>
+
+				{/* Physical & Chemical Properties */}
+				<FormSection
+					title="Physical & Chemical Properties"
+					isOpen={sections.properties}
+					onToggle={() => toggleSection('properties')}
+				>
+					<div className="row g-3">
 						<div className="col-md-6">
-							<label className="form-label" htmlFor="molecular-weight">Molecular Weight</label>
+							<label className="form-label fw-medium">Molecular Weight</label>
 							<input
-								id="molecular-weight"
 								type="text"
 								className="form-control"
 								name="Molecular Weight"
 								value={form["Molecular Weight"]}
 								onChange={handleChange}
+								placeholder="e.g. 58.08 g/mol"
 							/>
 						</div>
 						<div className="col-md-6">
-							<label className="form-label" htmlFor="density">Density</label>
+							<label className="form-label fw-medium">Density</label>
 							<input
-								id="density"
 								type="text"
 								className="form-control"
 								name="Density"
 								value={form.Density}
 								onChange={handleChange}
+								placeholder="e.g. 0.7845 g/cm3"
 							/>
 						</div>
-						<div className="col-md-6">
-							<label className="form-label" htmlFor="appearance">Appearance</label>
+						<div className="col-12">
+							<label className="form-label fw-medium">Appearance</label>
 							<input
-								id="appearance"
 								type="text"
 								className="form-control"
 								name="Appearance"
 								value={form.Appearance}
 								onChange={handleChange}
+								placeholder="e.g. Colorless liquid"
 							/>
 						</div>
+					</div>
+				</FormSection>
+
+				{/* Hazard Information */}
+				<FormSection
+					title="Hazard Information"
+					isOpen={sections.hazards}
+					onToggle={() => toggleSection('hazards')}
+				>
+					<div className="row g-3">
 						<div className="col-12">
-							<label className="form-label" htmlFor="hazard-info">Hazard Information</label>
+							<label className="form-label fw-medium">Hazard Statements</label>
 							<textarea
-								id="hazard-info"
 								className="form-control"
 								name="Hazard Information"
 								value={form["Hazard Information"]}
 								onChange={handleChange}
-								rows="2"
+								rows="3"
+								placeholder="GHS Hazard statements..."
 							/>
 						</div>
 						<div className="col-12">
-							<label className="form-label" htmlFor="properties">Properties</label>
+							<label className="form-label fw-medium">Safety Notes</label>
 							<textarea
-								id="properties"
-								className="form-control"
-								name="Properties"
-								value={form.Properties}
-								onChange={handleChange}
-								rows="2"
-							/>
-						</div>
-						<div className="col-12">
-							<label className="form-label" htmlFor="handling-storage">Handling &amp; Storage</label>
-							<textarea
-								id="handling-storage"
-								className="form-control"
-								name="Handling & Storage"
-								value={form["Handling & Storage"]}
-								onChange={handleChange}
-								rows="2"
-							/>
-						</div>
-						<div className="col-12">
-							<label className="form-label" htmlFor="safety-notes">Safety Notes</label>
-							<textarea
-								id="safety-notes"
 								className="form-control"
 								name="Safety Notes"
 								value={form["Safety Notes"]}
 								onChange={handleChange}
 								rows="2"
+								placeholder="Specific safety precautions..."
+							/>
+						</div>
+					</div>
+				</FormSection>
+
+				{/* Storage & Handling */}
+				<FormSection
+					title="Storage & Handling"
+					isOpen={sections.storage}
+					onToggle={() => toggleSection('storage')}
+				>
+					<div className="row g-3">
+						<div className="col-12">
+							<label className="form-label fw-medium">Handling & Storage Instructions</label>
+							<textarea
+								className="form-control"
+								name="Handling & Storage"
+								value={form["Handling & Storage"]}
+								onChange={handleChange}
+								rows="3"
 							/>
 						</div>
 						<div className="col-12">
-							<label className="form-label" htmlFor="lab-use-notes">Lab Use Notes</label>
+							<label className="form-label fw-medium">Lab Use Notes</label>
 							<textarea
-								id="lab-use-notes"
 								className="form-control"
 								name="Lab Use Notes"
 								value={form["Lab Use Notes"]}
@@ -222,28 +336,21 @@ function AddChemical() {
 								rows="2"
 							/>
 						</div>
-						<div className="col-md-6">
-							<label className="form-label" htmlFor="sds-link">SDS Link</label>
-							<input
-								id="sds-link"
-								type="url"
-								className="form-control"
-								name="SDS Link"
-								value={form["SDS Link"]}
-								onChange={handleChange}
-								placeholder="Paste SDS URL (optional)"
-							/>
-						</div>
+					</div>
+				</FormSection>
 
-						<div className="col-12"><hr className="my-4" /></div>
-						<div className="col-12"><h5 className="mb-3">Inventory Details</h5></div>
-
+				{/* Inventory & Tags */}
+				<FormSection
+					title="Inventory & Tags"
+					isOpen={sections.inventory}
+					onToggle={() => toggleSection('inventory')}
+				>
+					<div className="row g-3">
 						<div className="col-md-4">
-							<label htmlFor="quantity" className="form-label">Quantity</label>
+							<label className="form-label fw-medium">Quantity</label>
 							<input
 								type="number"
 								className="form-control"
-								id="quantity"
 								name="quantity"
 								value={form.quantity}
 								onChange={handleChange}
@@ -251,10 +358,9 @@ function AddChemical() {
 							/>
 						</div>
 						<div className="col-md-4">
-							<label htmlFor="unit" className="form-label">Unit</label>
+							<label className="form-label fw-medium">Unit</label>
 							<select
 								className="form-select"
-								id="unit"
 								name="unit"
 								value={form.unit}
 								onChange={handleChange}
@@ -267,64 +373,82 @@ function AddChemical() {
 							</select>
 						</div>
 						<div className="col-md-4">
-							<label htmlFor="location" className="form-label">Location</label>
+							<label className="form-label fw-medium">Location</label>
 							<input
 								type="text"
 								className="form-control"
-								id="location"
 								name="location"
 								value={form.location}
 								onChange={handleChange}
-								placeholder="e.g. Cabinet A, Shelf 2"
+								placeholder="e.g. Cabinet A"
 							/>
 						</div>
-
 						<div className="col-md-6">
-							<label htmlFor="expirationDate" className="form-label">Expiration Date</label>
+							<label className="form-label fw-medium">Expiration Date</label>
 							<input
 								type="date"
 								className="form-control"
-								id="expirationDate"
 								name="expirationDate"
 								value={form.expirationDate}
 								onChange={handleChange}
 							/>
 						</div>
 						<div className="col-md-6">
-							<label htmlFor="lowStockThreshold" className="form-label">Low Stock Alert Threshold</label>
+							<label className="form-label fw-medium">Low Stock Threshold</label>
 							<input
 								type="number"
 								className="form-control"
-								id="lowStockThreshold"
 								name="lowStockThreshold"
 								value={form.lowStockThreshold}
 								onChange={handleChange}
-								placeholder="Alert when quantity below..."
 							/>
 						</div>
-						<div className="col-md-6">
-							<label className="form-label" htmlFor="categories">Categories/Tags</label>
+						<div className="col-12">
+							<label className="form-label fw-medium">Categories/Tags</label>
 							<select
-								id="categories"
 								className="form-select"
 								name="categories"
 								multiple
 								value={form.categories}
 								onChange={handleChange}
+								style={{ height: '120px' }}
 							>
 								{CATEGORY_OPTIONS.map((cat) => (
 									<option key={cat} value={cat}>{cat}</option>
 								))}
 							</select>
-							<div className="form-text">Hold Ctrl (Windows) or Cmd (Mac) to select multiple.</div>
-						</div>
-						<div className="col-12 d-flex gap-2 justify-content-end mt-2">
-							<button type="button" className="btn btn-outline-primary" onClick={() => navigate("/chemicals")}>Cancel</button>
-							<button type="submit" className="btn btn-primary">Add Chemical</button>
+							<div className="form-text">Hold Ctrl/Cmd to select multiple</div>
 						</div>
 					</div>
-				</form>
-			</div>
+				</FormSection>
+
+				{/* Action Bar */}
+				<div style={{
+					display: 'flex',
+					justifyContent: 'flex-end',
+					gap: '1rem',
+					marginTop: '2rem',
+					padding: '1rem',
+					backgroundColor: 'var(--surface)',
+					borderRadius: 'var(--radius-lg)',
+					border: '1px solid var(--border-light)'
+				}}>
+					<button
+						type="button"
+						className="btn btn-outline-secondary"
+						onClick={() => navigate("/chemicals")}
+					>
+						Cancel
+					</button>
+					<button
+						type="submit"
+						className="btn btn-primary"
+						style={{ minWidth: '120px' }}
+					>
+						Save Chemical
+					</button>
+				</div>
+			</form>
 		</div>
 	);
 }

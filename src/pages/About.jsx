@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import '../styles/modern.css';
 
 const BASE = import.meta.env.BASE_URL || '/';
 
@@ -9,64 +8,92 @@ export default function About() {
   }, []);
 
   return (
-    <div className="app-container">
-      <div className="page-header">
-        <div className="header-content">
-          <img src={`${BASE}assets/logo.svg`} alt="ChemRef Hub" className="app-logo" />
-          <h1 className="section-title">About ChemRef Hub</h1>
-        </div>
-        <p className="lead mb-0" style={{ position: 'relative', zIndex: 1, marginTop: 'var(--space-2)' }}>
-          Your comprehensive chemical reference and laboratory management solution
+    <div className="about-page" style={{ maxWidth: '800px', margin: '0 auto' }}>
+      <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+        <img
+          src={`${BASE}assets/logo.svg`}
+          alt="ChemRef Hub Logo"
+          style={{ width: '80px', height: '80px', marginBottom: '1.5rem' }}
+        />
+        <h1 style={{ fontSize: '2.5rem', fontWeight: 700, marginBottom: '1rem', background: 'linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+          ChemRef Hub
+        </h1>
+        <p style={{ fontSize: '1.25rem', color: 'var(--text-secondary)', maxWidth: '600px', margin: '0 auto' }}>
+          Your comprehensive chemical reference and laboratory management solution.
         </p>
       </div>
 
-      <div className="grid-container" style={{ gridTemplateColumns: '1fr' }}>
-        <div className="info-card">
-          <h3>Mission</h3>
-          <p>
-            ChemRef Hub helps students and labs keep a structured, searchable reference of chemicals,
-            with safety context, quick properties, and a simple logbook. It's optimized for fast lookup,
-            lightweight data entry, and easy sharing as a static website.
+      <div style={{ display: 'grid', gap: '2rem' }}>
+        <div style={{
+          backgroundColor: 'var(--surface)',
+          padding: '2rem',
+          borderRadius: 'var(--radius-lg)',
+          border: '1px solid var(--border-light)'
+        }}>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 600, marginBottom: '1rem' }}>Mission</h2>
+          <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
+            ChemRef Hub aims to provide students, researchers, and lab managers with a structured, searchable, and easy-to-use platform for managing chemical inventories.
+            We prioritize fast access to safety data, intuitive organization, and a lightweight, offline-capable experience.
           </p>
         </div>
 
-        <div className="info-card">
-          <h3>What you can do</h3>
-          <ul style={{ margin: 0, paddingLeft: 'var(--space-4)' }}>
-            <li>Browse the built-in catalog and filter by name or tags</li>
-            <li>Open a chemical to view properties, hazards, and notes</li>
-            <li>Bookmark favorites for quick access</li>
-            <li>Import/export your dataset as JSON</li>
-            <li>Add new chemicals and record activity in the logbook</li>
+        <div style={{
+          backgroundColor: 'var(--surface)',
+          padding: '2rem',
+          borderRadius: 'var(--radius-lg)',
+          border: '1px solid var(--border-light)'
+        }}>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 600, marginBottom: '1rem' }}>Key Features</h2>
+          <ul style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+            gap: '1rem',
+            padding: 0,
+            margin: 0,
+            listStyle: 'none'
+          }}>
+            <li style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
+              <span style={{ color: 'var(--success)' }}>✓</span>
+              <span style={{ color: 'var(--text-secondary)' }}>Searchable Chemical Catalog</span>
+            </li>
+            <li style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
+              <span style={{ color: 'var(--success)' }}>✓</span>
+              <span style={{ color: 'var(--text-secondary)' }}>Inventory Tracking & Alerts</span>
+            </li>
+            <li style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
+              <span style={{ color: 'var(--success)' }}>✓</span>
+              <span style={{ color: 'var(--text-secondary)' }}>Safety Data & Hazard Tags</span>
+            </li>
+            <li style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
+              <span style={{ color: 'var(--success)' }}>✓</span>
+              <span style={{ color: 'var(--text-secondary)' }}>Usage Logbook</span>
+            </li>
+            <li style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
+              <span style={{ color: 'var(--success)' }}>✓</span>
+              <span style={{ color: 'var(--text-secondary)' }}>Lab Calculators</span>
+            </li>
+            <li style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
+              <span style={{ color: 'var(--success)' }}>✓</span>
+              <span style={{ color: 'var(--text-secondary)' }}>Local Data Storage (Private)</span>
+            </li>
           </ul>
         </div>
 
-        <div className="info-card">
-          <h3>Data sources & accuracy</h3>
-          <p>
-            Built-in data is provided for demonstration and may not be complete. Always verify against
-            official Safety Data Sheets (SDS) and authoritative sources. Links to public resources are
-            provided in Resources.
-          </p>
-        </div>
-
-        <div className="info-card">
-          <h3>Privacy</h3>
-          <p>
-            This app stores your additions and preferences locally in your browser (localStorage).
-            No accounts or servers are required for core features.
-          </p>
-        </div>
-
-        <div className="info-card" style={{
-          background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%)',
-          borderColor: 'var(--danger)'
+        <div style={{
+          backgroundColor: 'rgba(239, 68, 68, 0.05)',
+          padding: '2rem',
+          borderRadius: 'var(--radius-lg)',
+          border: '1px solid var(--error-light)'
         }}>
-          <h3 style={{ color: 'var(--danger)' }}>Disclaimer</h3>
-          <p style={{ margin: 0 }}>
-            Educational use only. Always follow lab policies and consult your institution's safety
-            officer. In emergencies, call your local emergency number.
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 600, marginBottom: '1rem', color: 'var(--error)' }}>Disclaimer</h2>
+          <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
+            This application is for educational and reference purposes only. While we strive for accuracy, the data provided should always be verified against official Safety Data Sheets (SDS) and manufacturer information.
+            The developers assume no liability for the use or misuse of the information provided.
           </p>
+        </div>
+
+        <div style={{ textAlign: 'center', marginTop: '1rem', color: 'var(--text-tertiary)', fontSize: '0.875rem' }}>
+          <p>Version 1.3.0 • Built with React & Vite</p>
         </div>
       </div>
     </div>

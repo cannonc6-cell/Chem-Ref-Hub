@@ -69,6 +69,18 @@ function ChemicalUsageHistory({ chemicalId }) {
         }
     };
 
+    const handleDeleteLog = (logId) => {
+        if (window.confirm('Are you sure you want to delete this log entry?')) {
+            const updatedLogs = logs.filter(log => log.id !== logId);
+            setLogs(updatedLogs);
+
+            // Update localStorage
+            const allLogs = JSON.parse(localStorage.getItem('chemical_usage_logs') || '[]');
+            const newAllLogs = allLogs.filter(log => log.id !== logId);
+            localStorage.setItem('chemical_usage_logs', JSON.stringify(newAllLogs));
+        }
+    };
+
     return (
         <div className="mt-4">
             <div className="d-flex justify-content-between align-items-center mb-3">
@@ -90,6 +102,7 @@ function ChemicalUsageHistory({ chemicalId }) {
                                 <th>Quantity</th>
                                 <th>User</th>
                                 <th>Notes</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -104,6 +117,15 @@ function ChemicalUsageHistory({ chemicalId }) {
                                     <td>{log.quantity} {log.unit}</td>
                                     <td>{log.user}</td>
                                     <td className="text-muted small">{log.notes}</td>
+                                    <td>
+                                        <button
+                                            className="btn btn-sm btn-outline-danger"
+                                            onClick={() => handleDeleteLog(log.id)}
+                                            title="Delete Entry"
+                                        >
+                                            🗑️
+                                        </button>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>

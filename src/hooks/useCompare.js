@@ -35,13 +35,13 @@ export function useCompare() {
             }
 
             const newItem = {
-                id: chemical.id,
-                name: chemical.name,
-                formula: chemical.formula,
-                image: chemical.image,
+                id: chemical.id || chemical.CAS || chemical["Chemical Name"] || chemical.name,
+                name: chemical.name || chemical["Chemical Name"] || "",
+                formula: chemical.formula || chemical["Formula"] || "",
+                image: chemical.image || "",
                 properties: chemical.properties || {},
-                hazards: chemical.hazards || {},
-                CAS: chemical.CAS
+                hazards: chemical.hazards || chemical["Hazard Information"] || {},
+                CAS: chemical.CAS || chemical["CAS"] || ""
             };
 
             const updated = [...prev, newItem];

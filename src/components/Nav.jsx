@@ -1,216 +1,173 @@
-import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import React from "react";
+import { Link } from "react-router-dom";
 import ThemeToggle from "./ThemeToggle";
 import { useAuth } from "../context/AuthContext";
 
 function Nav({ searchValue, onSearchChange, showSearch = false }) {
-  const location = useLocation();
-  const [open, setOpen] = useState(false);
   const { user, authLoading, signInWithGoogle, signOutUser } = useAuth();
 
-  // Keyboard shortcut: Alt+M to toggle mobile menu
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.altKey && (e.key === 'm' || e.key === 'M')) {
-        e.preventDefault();
-        setOpen((prev) => !prev);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
   return (
-    <nav className="navbar navbar-expand-lg fixed-top" style={{
-      backgroundColor: 'var(--primary)',
-      boxShadow: 'var(--shadow-lg)'
+    <header className="header" style={{
+      height: 'var(--header-height)',
+      backgroundColor: 'var(--header-bg)',
+      borderBottom: '1px solid var(--header-border)',
+      display: 'flex',
+      alignItems: 'center',
+      padding: '0 2rem',
+      position: 'sticky',
+      top: 0,
+      zIndex: 900,
+      width: '100%'
     }}>
-      <div className="container-fluid" style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 1rem' }}>
-        <a href="#main-content" className="visually-hidden-focusable btn btn-light btn-sm me-2">Skip to content</a>
-        <Link className="navbar-brand" to="/dashboard" style={{ fontWeight: '700', fontSize: 'var(--text-xl)' }}>
-          ChemRef Hub
-        </Link>
-
-        {/* Integrated Search Bar (Desktop) */}
+      {/* Search Bar */}
+      <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
         {showSearch && (
-          <div className="d-none d-lg-flex flex-grow-1 mx-4" style={{ maxWidth: '500px' }}>
+          <div style={{ position: 'relative', width: '100%', maxWidth: '600px' }}>
+            <div style={{
+              position: 'absolute',
+              left: '12px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              color: 'var(--text-tertiary)',
+              pointerEvents: 'none',
+              display: 'flex',
+              alignItems: 'center'
+            }}>
+              <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
             <input
               type="search"
-              className="form-control"
-              placeholder="Search chemicals..."
+              placeholder="Search chemicals, properties, or records..."
               value={searchValue || ''}
               onChange={(e) => onSearchChange && onSearchChange(e.target.value)}
               style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.15)',
-                border: '1px solid rgba(255, 255, 255, 0.3)',
-                color: '#fff',
-                padding: '0.5rem 1rem',
-                borderRadius: 'var(--radius-md)',
+                width: '100%',
+                padding: '0.625rem 1rem 0.625rem 2.5rem',
+                borderRadius: 'var(--radius-full)',
+                border: '1px solid var(--border-light)',
+                backgroundColor: 'var(--bg-secondary)',
+                color: 'var(--text-primary)',
+                fontSize: '0.9375rem',
+                outline: 'none',
+                transition: 'all var(--transition-fast)'
+              }}
+              onFocus={(e) => {
+                e.target.style.backgroundColor = 'var(--surface)';
+                e.target.style.borderColor = 'var(--primary-light)';
+                e.target.style.boxShadow = '0 0 0 3px var(--primary-lighter)';
+              }}
+              onBlur={(e) => {
+                e.target.style.backgroundColor = 'var(--bg-secondary)';
+                e.target.style.borderColor = 'var(--border-light)';
+                e.target.style.boxShadow = 'none';
               }}
             />
           </div>
         )}
+      </div>
 
+      {/* Right Actions */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <ThemeToggle />
+
+        {/* Notification Bell (Mock) */}
         <button
-          className="navbar-toggler"
-          type="button"
-          aria-controls="navbarResponsive"
-          aria-expanded={open ? "true" : "false"}
-          aria-label="Toggle navigation"
-          onClick={() => setOpen(!open)}
           style={{
-            border: '1px solid rgba(255, 255, 255, 0.3)',
-            padding: '0.5rem'
+            background: 'none',
+            border: 'none',
+            color: 'var(--text-secondary)',
+            cursor: 'pointer',
+            padding: '8px',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'background-color var(--transition-fast)'
           }}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+          aria-label="Notifications"
         >
-          <span className="navbar-toggler-icon"></span>
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+          </svg>
         </button>
 
-        <div className={`collapse navbar-collapse ${open ? 'show' : ''}`} id="navbarResponsive">
-          {/* Mobile Search Bar */}
-          {showSearch && (
-            <div className="d-lg-none mt-3 mb-2">
-              <input
-                type="search"
-                className="form-control"
-                placeholder="Search chemicals..."
-                value={searchValue || ''}
-                onChange={(e) => onSearchChange && onSearchChange(e.target.value)}
-                style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.15)',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                  color: '#fff',
-                  padding: '0.75rem 1rem',
-                }}
-              />
-            </div>
-          )}
+        {!authLoading && (
+          <div className="d-flex align-items-center">
+            {user ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <div className="user-info-desktop" style={{ textAlign: 'right', display: 'none' }}>
+                  <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                    {(() => {
+                      const savedProfile = localStorage.getItem(`userProfile_${user.uid}`);
+                      if (savedProfile) {
+                        try {
+                          const profileData = JSON.parse(savedProfile);
+                          return profileData.customName || user.displayName || 'User';
+                        } catch {
+                          return user.displayName || 'User';
+                        }
+                      }
+                      return user.displayName || 'User';
+                    })()}
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>Researcher</div>
+                </div>
 
-          <ul className="navbar-nav ms-auto">
-            <li className="nav-item">
-              <Link
-                className={`nav-link ${location.pathname === '/dashboard' ? 'active' : ''}`}
-                to="/dashboard"
-                onClick={() => setOpen(false)}
+                <Link to="/profile" style={{ textDecoration: 'none' }}>
+                  {user.photoURL ? (
+                    <img
+                      src={user.photoURL}
+                      alt="Profile"
+                      style={{
+                        width: '40px',
+                        height: '40px',
+                        borderRadius: '50%',
+                        objectFit: 'cover',
+                        border: '2px solid var(--border-light)'
+                      }}
+                    />
+                  ) : (
+                    <div style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '50%',
+                      backgroundColor: 'var(--primary)',
+                      color: 'white',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontWeight: 600,
+                      fontSize: '1.25rem'
+                    }}>
+                      {(user.displayName || user.email || 'U').charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                </Link>
+              </div>
+            ) : (
+              <button
+                type="button"
+                className="btn btn-primary btn-sm"
+                onClick={signInWithGoogle}
+                style={{
+                  backgroundColor: 'var(--primary)',
+                  borderColor: 'var(--primary)',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '0.5rem 1rem',
+                  fontWeight: 500
+                }}
               >
-                Dashboard
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link
-                className={`nav-link ${location.pathname.startsWith('/chemicals') ? 'active' : ''}`}
-                to="/chemicals"
-                onClick={() => setOpen(false)}
-              >
-                Chemicals
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link
-                className={`nav-link ${location.pathname === '/add-chemical' ? 'active' : ''}`}
-                to="/add-chemical"
-                onClick={() => setOpen(false)}
-              >
-                Add Chemical
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link
-                className={`nav-link ${location.pathname === '/calculators' ? 'active' : ''}`}
-                to="/calculators"
-                onClick={() => setOpen(false)}
-              >
-                Calculators
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link
-                className={`nav-link ${location.pathname === '/safety' ? 'active' : ''}`}
-                to="/safety"
-                onClick={() => setOpen(false)}
-              >
-                Safety
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link
-                className={`nav-link ${location.pathname === '/logbook' ? 'active' : ''}`}
-                to="/logbook"
-                onClick={() => setOpen(false)}
-              >
-                Logbook
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link
-                className={`nav-link ${location.pathname === '/resources' ? 'active' : ''}`}
-                to="/resources"
-                onClick={() => setOpen(false)}
-              >
-                Resources
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link
-                className={`nav-link ${location.pathname === '/glossary' ? 'active' : ''}`}
-                to="/glossary"
-                onClick={() => setOpen(false)}
-              >
-                Glossary
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link
-                className={`nav-link ${location.pathname === '/faq' ? 'active' : ''}`}
-                to="/faq"
-                onClick={() => setOpen(false)}
-              >
-                FAQ
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link
-                className={`nav-link ${location.pathname === '/about' ? 'active' : ''}`}
-                to="/about"
-                onClick={() => setOpen(false)}
-              >
-                About
-              </Link>
-            </li>
-            <li className="nav-item">
-              <ThemeToggle />
-            </li>
-            {!authLoading && (
-              <li className="nav-item ms-2 d-flex align-items-center">
-                {user ? (
-                  <>
-                    <span className="nav-link disabled" style={{ opacity: 0.8 }}>
-                      {user.displayName || user.email}
-                    </span>
-                    <button
-                      type="button"
-                      className="btn btn-sm btn-outline-light ms-1"
-                      onClick={signOutUser}
-                    >
-                      Sign out
-                    </button>
-                  </>
-                ) : (
-                  <button
-                    type="button"
-                    className="btn btn-sm btn-outline-light ms-1"
-                    onClick={signInWithGoogle}
-                  >
-                    Sign in with Google
-                  </button>
-                )}
-              </li>
+                Sign in
+              </button>
             )}
-          </ul>
-        </div>
+          </div>
+        )}
       </div>
-    </nav>
+    </header>
   );
 }
 

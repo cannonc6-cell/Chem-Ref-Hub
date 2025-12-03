@@ -1,9 +1,10 @@
-import { BrowserRouter as Router, Routes, Route, Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import Footer from './components/Footer.jsx';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import Nav from './components/Nav.jsx';
+import Footer from './components/Footer.jsx';
+import Sidebar from './components/Sidebar.jsx';
 import BackToTop from './components/BackToTop.jsx';
-import Breadcrumbs from './components/Breadcrumbs.jsx';
+import './styles/sidebar-navigation.css';
 import Chemicals from './pages/Chemicals.jsx';
 import AddChemical from './pages/AddChemical.jsx';
 import Dashboard from './pages/Dashboard.jsx';
@@ -16,6 +17,8 @@ import FAQ from './pages/FAQ.jsx';
 import Resources from './pages/Resources.jsx';
 import Glossary from './pages/Glossary.jsx';
 import NotFound from './pages/NotFound.jsx';
+import UserProfile from './pages/UserProfile.jsx';
+import { Toaster } from 'react-hot-toast';
 
 function AppContent() {
   const location = useLocation();
@@ -70,16 +73,25 @@ function AppContent() {
   }, [navigate]);
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <Nav
-        searchValue={search}
-        onSearchChange={setSearch}
-        showSearch={showSearch}
-      />
-      <main id="main-content" style={{ flex: 1, paddingTop: '70px' }}>
-        <div className="container">
-          <Breadcrumbs />
-          {/* Lower nav bar removed as requested */}
+    <div style={{ display: 'flex', minHeight: '100vh' }}>
+      {/* Sidebar Navigation */}
+      <Sidebar />
+
+      {/* Main Content Area */}
+      <div style={{
+        flex: 1,
+        marginLeft: 'var(--sidebar-width)',
+        display: 'flex',
+        flexDirection: 'column',
+        width: 'calc(100% - var(--sidebar-width))', // Ensure width is correct
+        marginTop: 0 // Explicitly remove top margin
+      }}>
+        <Nav
+          searchValue={search}
+          onSearchChange={setSearch}
+          showSearch={showSearch}
+        />
+        <main id="main-content" style={{ flex: 1, padding: '2rem' }}>
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<Dashboard />} />
@@ -93,17 +105,36 @@ function AppContent() {
             <Route path="/faq" element={<FAQ />} />
             <Route path="/resources" element={<Resources />} />
             <Route path="/glossary" element={<Glossary />} />
+            <Route path="/profile" element={<UserProfile />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </div>
-      </main>
-      <Footer />
-      <BackToTop />
+        </main>
+        <Footer />
+        <BackToTop />
+        <Toaster
+          position="top-right"
+          reverseOrder={false}
+          toastOptions={{
+            duration: 4000,
+            style: {
+              background: 'var(--bg-primary)',
+              color: 'var(--text-primary)',
+            },
+            success: {
+              iconTheme: {
+                primary: 'var(--success-color, #10b981)',
+                secondary: 'white',
+              },
+            },
+          }}
+        />
+      </div>
     </div>
   );
 }
 
 function App() {
+  // Main App Component
   return (
     <Router>
       <AppContent />

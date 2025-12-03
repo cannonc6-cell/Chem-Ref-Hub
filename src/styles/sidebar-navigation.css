@@ -1,0 +1,196 @@
+/* ============================================
+   Sidebar Navigation Styles
+   ============================================ */
+
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: var(--sidebar-width);
+    background-color: var(--sidebar-bg);
+    color: var(--sidebar-text);
+    display: flex;
+    flex-direction: column;
+    transition: width var(--transition-normal);
+    z-index: 1000;
+    /* overflow: hidden; - Removed to allow toggle button to protrude */
+}
+
+.sidebar.collapsed {
+    width: var(--sidebar-collapsed-width);
+}
+
+/* Sidebar Header */
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    padding: 1.25rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    min-height: var(--header-height);
+}
+
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.sidebar-logo-icon {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: white;
+    font-weight: 700;
+    font-size: 1.125rem;
+}
+
+.sidebar-logo-text {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: white;
+    opacity: 1;
+    transition: opacity var(--transition-fast);
+}
+
+.sidebar.collapsed .sidebar-logo-text {
+    opacity: 0;
+    width: 0;
+}
+
+/* Collapse Toggle Button */
+.sidebar-toggle {
+    position: absolute;
+    right: -12px;
+    top: 24px;
+    width: 24px;
+    height: 24px;
+    background: var(--sidebar-bg);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+    color: var(--sidebar-text);
+    z-index: 10;
+}
+
+.sidebar-toggle:hover {
+    background: var(--sidebar-hover);
+    border-color: rgba(255, 255, 255, 0.4);
+    color: white;
+}
+
+.sidebar-toggle svg {
+    width: 14px;
+    height: 14px;
+    transition: transform var(--transition-normal);
+}
+
+.sidebar.collapsed .sidebar-toggle svg {
+    transform: rotate(180deg);
+}
+
+/* Navigation */
+.sidebar-nav {
+    flex: 1;
+    padding: 1rem 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.sidebar-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    color: var(--sidebar-text);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+    text-decoration: none;
+    border-left: 3px solid transparent;
+    position: relative;
+}
+
+.sidebar-nav-item:hover {
+    background-color: var(--sidebar-hover);
+    color: white;
+}
+
+.sidebar-nav-item.active {
+    background-color: var(--sidebar-hover);
+    color: var(--sidebar-text-active);
+    border-left-color: var(--primary);
+}
+
+.sidebar-nav-item-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar-nav-item-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+.sidebar-nav-item-text {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    opacity: 1;
+    transition: opacity var(--transition-fast);
+}
+
+.sidebar.collapsed .sidebar-nav-item-text {
+    opacity: 0;
+    width: 0;
+}
+
+.sidebar.collapsed .sidebar-nav-item {
+    justify-content: center;
+    padding-left: 1.375rem;
+    padding-right: 1.375rem;
+}
+
+/* Sidebar Footer */
+.sidebar-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem 0;
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform var(--transition-normal);
+    }
+
+    .sidebar.mobile-open {
+        transform: translateX(0);
+    }
+
+    .sidebar-backdrop {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    }
+
+    .sidebar-backdrop.show {
+        display: block;
+    }
+}

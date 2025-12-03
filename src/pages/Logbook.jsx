@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/modern.css';
+import toast from 'react-hot-toast';
 
 function Logbook() {
   const [entries, setEntries] = useState(() => {
-    // Load existing entries from localStorage
     try {
       return JSON.parse(localStorage.getItem('chemicalLogbook') || '[]');
     } catch {
@@ -15,11 +14,9 @@ function Logbook() {
     date: new Date().toISOString().split('T')[0],
     chemical: '',
     quantity: '',
-    action: 'used', // or 'added', 'disposed'
+    action: 'used',
     notes: ''
   });
-  const [alertMsg, setAlertMsg] = useState('');
-  const [alertVariant, setAlertVariant] = useState('success');
 
   useEffect(() => {
     document.title = 'Logbook – ChemRef Hub';
@@ -27,29 +24,26 @@ function Logbook() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Basic validation
+
     if (!newEntry.chemical.trim()) {
-      setAlertVariant('danger');
-      setAlertMsg('Chemical name is required.');
+      toast.error('Chemical name is required.');
       return;
     }
     if (!newEntry.quantity.trim()) {
-      setAlertVariant('danger');
-      setAlertMsg('Quantity is required.');
+      toast.error('Quantity is required.');
       return;
     }
-    // optional: simple numeric-like validation (allows numbers + units)
+
     const entry = {
       ...newEntry,
-      id: Date.now(), // unique ID for each entry
+      id: Date.now(),
       timestamp: new Date().toISOString()
     };
-    
+
     const updatedEntries = [entry, ...entries];
     setEntries(updatedEntries);
     localStorage.setItem('chemicalLogbook', JSON.stringify(updatedEntries));
-    
-    // Reset form
+
     setNewEntry({
       date: new Date().toISOString().split('T')[0],
       chemical: '',
@@ -57,72 +51,75 @@ function Logbook() {
       action: 'used',
       notes: ''
     });
-    setAlertVariant('success');
-    setAlertMsg('Logbook entry added.');
+    toast.success('Logbook entry added.');
+  };
+
+  const handleDelete = (id) => {
+    if (window.confirm('Are you sure you want to delete this entry?')) {
+      const updated = entries.filter(e => e.id !== id);
+      setEntries(updated);
+      localStorage.setItem('chemicalLogbook', JSON.stringify(updated));
+      toast.success('Entry deleted.');
+    }
   };
 
   return (
-    <div className="app-container">
-      <div className="page-header">
-        <div className="header-content">
-          <h1 className="section-title">Chemical Logbook</h1>
-        </div>
+    <div className="logbook-page" style={{ maxWidth: '1000px', margin: '0 auto' }}>
+      <div style={{ marginBottom: '2rem' }}>
+        <h1 style={{ fontSize: '1.875rem', fontWeight: 700, marginBottom: '0.5rem' }}>Chemical Logbook</h1>
+        <p style={{ color: 'var(--text-secondary)' }}>Track chemical usage, additions, and disposal events.</p>
       </div>
-      {alertMsg && (
-        <div className={`alert alert-${alertVariant} d-flex justify-content-between align-items-center`} role="alert">
-          <span>{alertMsg}</span>
-          <button type="button" className="btn-close" aria-label="Close" onClick={() => setAlertMsg('')}></button>
-        </div>
-      )}
-      
-      {/* New Entry Form */}
-      <div className="card mb-4">
-        <div className="card-body">
-          <h5 className="card-title subheader-accent">New Entry</h5>
+
+      <div style={{ display: 'grid', gap: '2rem', gridTemplateColumns: '1fr' }}>
+        {/* New Entry Form */}
+        <div style={{
+          backgroundColor: 'var(--surface)',
+          padding: '1.5rem',
+          borderRadius: 'var(--radius-lg)',
+          border: '1px solid var(--border-light)',
+          boxShadow: 'var(--shadow-sm)'
+        }}>
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1.5rem' }}>Add New Entry</h2>
           <form onSubmit={handleSubmit}>
             <div className="row g-3">
               <div className="col-md-3">
-                <label className="form-label" htmlFor="log-date">Date</label>
+                <label className="form-label fw-medium" style={{ fontSize: '0.875rem' }}>Date</label>
                 <input
-                  id="log-date"
                   type="date"
                   className="form-control"
                   value={newEntry.date}
-                  onChange={e => setNewEntry({...newEntry, date: e.target.value})}
+                  onChange={e => setNewEntry({ ...newEntry, date: e.target.value })}
                   required
                 />
               </div>
-              <div className="col-md-3">
-                <label className="form-label" htmlFor="log-chemical">Chemical</label>
+              <div className="col-md-4">
+                <label className="form-label fw-medium" style={{ fontSize: '0.875rem' }}>Chemical Name</label>
                 <input
-                  id="log-chemical"
                   type="text"
                   className="form-control"
                   value={newEntry.chemical}
-                  onChange={e => setNewEntry({...newEntry, chemical: e.target.value})}
+                  onChange={e => setNewEntry({ ...newEntry, chemical: e.target.value })}
                   required
-                  placeholder="Chemical name"
+                  placeholder="e.g. Acetone"
                 />
               </div>
               <div className="col-md-2">
-                <label className="form-label" htmlFor="log-quantity">Quantity</label>
+                <label className="form-label fw-medium" style={{ fontSize: '0.875rem' }}>Quantity</label>
                 <input
-                  id="log-quantity"
                   type="text"
                   className="form-control"
                   value={newEntry.quantity}
-                  onChange={e => setNewEntry({...newEntry, quantity: e.target.value})}
+                  onChange={e => setNewEntry({ ...newEntry, quantity: e.target.value })}
                   required
-                  placeholder="Amount"
+                  placeholder="e.g. 50g"
                 />
               </div>
-              <div className="col-md-2">
-                <label className="form-label" htmlFor="log-action">Action</label>
+              <div className="col-md-3">
+                <label className="form-label fw-medium" style={{ fontSize: '0.875rem' }}>Action</label>
                 <select
-                  id="log-action"
                   className="form-select"
                   value={newEntry.action}
-                  onChange={e => setNewEntry({...newEntry, action: e.target.value})}
+                  onChange={e => setNewEntry({ ...newEntry, action: e.target.value })}
                   required
                 >
                   <option value="used">Used</option>
@@ -130,79 +127,95 @@ function Logbook() {
                   <option value="disposed">Disposed</option>
                 </select>
               </div>
-              <div className="col-md-2 d-flex align-items-end">
-                <button type="submit" className="btn btn-primary w-100">Add Entry</button>
-              </div>
               <div className="col-12">
-                <label className="form-label" htmlFor="log-notes">Notes</label>
+                <label className="form-label fw-medium" style={{ fontSize: '0.875rem' }}>Notes</label>
                 <textarea
-                  id="log-notes"
                   className="form-control"
                   value={newEntry.notes}
-                  onChange={e => setNewEntry({...newEntry, notes: e.target.value})}
-                  placeholder="Optional notes"
+                  onChange={e => setNewEntry({ ...newEntry, notes: e.target.value })}
+                  placeholder="Optional notes about the usage or experiment..."
                   rows="2"
                 />
+              </div>
+              <div className="col-12 d-flex justify-content-end">
+                <button type="submit" className="btn btn-primary">Add Entry</button>
               </div>
             </div>
           </form>
         </div>
-      </div>
 
-      {/* Entries List */}
-      <div className="table-responsive">
-        <table className="table table-striped logbook-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Chemical</th>
-              <th>Quantity</th>
-              <th>Action</th>
-              <th>Notes</th>
-              <th></th> {/* Delete column */}
-            </tr>
-          </thead>
-          <tbody>
-            {entries.length === 0 ? (
-              <tr>
-                <td colSpan="6" className="text-center">No entries yet</td>
-              </tr>
-            ) : (
-              entries.map(entry => (
-                <tr key={entry.id}>
-                  <td>{new Date(entry.date).toLocaleDateString()}</td>
-                  <td>{entry.chemical}</td>
-                  <td>{entry.quantity}</td>
-                  <td>
-                    <span className={`badge ${
-                      entry.action === 'used' ? 'bg-warning' :
-                      entry.action === 'added' ? 'bg-success' :
-                      'bg-danger'
-                    }`}>
-                      {entry.action}
-                    </span>
-                  </td>
-                  <td>{entry.notes}</td>
-                  <td>
-          <button
-                      className="btn btn-outline-danger btn-sm"
-                      title="Delete entry"
-                      onClick={() => {
-                        const updated = entries.filter(e => e.id !== entry.id);
-                        setEntries(updated);
-                        localStorage.setItem('chemicalLogbook', JSON.stringify(updated));
-            setAlertVariant('warning');
-            setAlertMsg('Entry deleted.');
-                      }}
-                    >
-                      Delete
-                    </button>
-                  </td>
+        {/* Entries List */}
+        <div style={{
+          backgroundColor: 'var(--surface)',
+          borderRadius: 'var(--radius-lg)',
+          border: '1px solid var(--border-light)',
+          overflow: 'hidden'
+        }}>
+          <div className="table-responsive">
+            <table className="table mb-0" style={{ width: '100%' }}>
+              <thead style={{ backgroundColor: 'var(--bg-secondary)' }}>
+                <tr>
+                  <th style={{ padding: '1rem', fontWeight: 600, fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Date</th>
+                  <th style={{ padding: '1rem', fontWeight: 600, fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Chemical</th>
+                  <th style={{ padding: '1rem', fontWeight: 600, fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Action</th>
+                  <th style={{ padding: '1rem', fontWeight: 600, fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Quantity</th>
+                  <th style={{ padding: '1rem', fontWeight: 600, fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Notes</th>
+                  <th style={{ padding: '1rem', fontWeight: 600, fontSize: '0.875rem', color: 'var(--text-secondary)' }}></th>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              </thead>
+              <tbody>
+                {entries.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-tertiary)' }}>
+                      No entries found. Start by adding one above.
+                    </td>
+                  </tr>
+                ) : (
+                  entries.map(entry => (
+                    <tr key={entry.id} style={{ borderBottom: '1px solid var(--border-light)' }}>
+                      <td style={{ padding: '1rem', verticalAlign: 'middle' }}>{new Date(entry.date).toLocaleDateString()}</td>
+                      <td style={{ padding: '1rem', verticalAlign: 'middle', fontWeight: 500 }}>{entry.chemical}</td>
+                      <td style={{ padding: '1rem', verticalAlign: 'middle' }}>
+                        <span style={{
+                          padding: '4px 10px',
+                          borderRadius: 'var(--radius-full)',
+                          fontSize: '0.75rem',
+                          fontWeight: 600,
+                          backgroundColor: entry.action === 'added' ? 'var(--success-light)' :
+                            entry.action === 'disposed' ? 'var(--error-light)' : 'var(--warning-light)',
+                          color: entry.action === 'added' ? 'var(--success-dark)' :
+                            entry.action === 'disposed' ? 'var(--error-dark)' : 'var(--warning-dark)',
+                          textTransform: 'capitalize'
+                        }}>
+                          {entry.action}
+                        </span>
+                      </td>
+                      <td style={{ padding: '1rem', verticalAlign: 'middle' }}>{entry.quantity}</td>
+                      <td style={{ padding: '1rem', verticalAlign: 'middle', color: 'var(--text-secondary)', maxWidth: '300px' }}>{entry.notes}</td>
+                      <td style={{ padding: '1rem', verticalAlign: 'middle', textAlign: 'right' }}>
+                        <button
+                          onClick={() => handleDelete(entry.id)}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: 'var(--error)',
+                            cursor: 'pointer',
+                            opacity: 0.7,
+                            transition: 'opacity var(--transition-fast)'
+                          }}
+                          onMouseEnter={(e) => e.target.style.opacity = 1}
+                          onMouseLeave={(e) => e.target.style.opacity = 0.7}
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   );
