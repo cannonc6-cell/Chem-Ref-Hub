@@ -5,18 +5,18 @@
    ============================================ */
 :root {
   /* Deep Ocean Palette - Professional & Modern */
-  --primary: #0F172A;
+  --primary: #0369A1;
   /* Rich Navy */
-  --primary-light: #1E293B;
+  --primary-light: #0EA5E9;
   /* Slate */
-  --primary-lighter: #334155;
+  --primary-lighter: #0C4A6E;
   /* Light Slate */
 
-  --accent: #3B82F6;
+  --accent: #06B6D4;
   /* Vibrant Blue */
-  --accent-light: #60A5FA;
+  --accent-light: #22D3EE;
   /* Sky Blue */
-  --accent-dark: #2563EB;
+  --accent-dark: #0891B2;
   /* Deep Blue */
 
   --success: #10B981;
@@ -271,7 +271,7 @@ h4 {
    PAGE HEADER
    ============================================ */
 .page-header {
-  background: var(--gradient-accent);
+  background: linear-gradient(135deg, #4C1D95 0%, #6366F1 50%, #EC4899 100%);
   color: #fff;
   padding: var(--space-4);
   border-radius: var(--radius-lg);
@@ -695,7 +695,7 @@ textarea:focus {
 
 .card-header {
   padding: var(--space-3) var(--space-4);
-  background: var(--gradient-surface);
+  background: linear-gradient(135deg, rgba(76, 29, 149, 0.08), rgba(236, 72, 153, 0.08));
   border-bottom: 1px solid var(--border-light);
   font-weight: var(--font-semibold);
   font-size: var(--text-lg);
@@ -1299,6 +1299,28 @@ textarea:focus {
   /* Mobile first */
   gap: var(--space-4);
   padding-bottom: var(--space-4);
+  position: relative;
+}
+
+.chemical-grid::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.18) 0, transparent 55%),
+    radial-gradient(circle at 80% 0%, rgba(236, 72, 153, 0.16) 0, transparent 55%),
+    url("data:image/svg+xml,%3Csvg width='340' height='340' viewBox='0 0 340 340' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop stop-color='%236366F1'/%3E%3Cstop offset='1' stop-color='%23EC4899'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg fill='none' stroke='url(%23g)' stroke-width='1.2' stroke-opacity='0.45'%3E%3Cpolygon points='40,10 70,30 40,50 10,30'/%3E%3Cpolygon points='140,90 160,110 140,130 120,110'/%3E%3Cpolygon points='260,40 290,60 260,80 230,60'/%3E%3Cpolygon points='80,200 110,220 80,240 50,220'/%3E%3Cpolygon points='220,190 250,210 220,230 190,210'/%3E%3Ccircle cx='60' cy='140' r='8'/%3E%3Ccircle cx='200' cy='260' r='10'/%3E%3Ccircle cx='290' cy='150' r='7'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: auto, auto, 420px 420px;
+  background-repeat: no-repeat;
+  background-position: left top, right top, center;
+  opacity: 0.35;
+  z-index: 0;
+}
+
+.chemical-grid > * {
+  position: relative;
+  z-index: 1;
 }
 
 @media (min-width: 768px) {
@@ -1362,3 +1384,7 @@ textarea:focus {
     justify-content: space-between;
   }
 }
+
+
+
+

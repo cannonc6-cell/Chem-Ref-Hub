@@ -14,11 +14,14 @@
   "dependencies": {
     "bootstrap": "^5.3.8",
     "firebase": "^12.6.0",
+    "fuse.js": "^7.1.0",
+    "html2canvas": "^1.4.1",
     "jspdf": "^3.0.4",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-hot-toast": "^2.6.0",
     "react-router-dom": "^7.9.2",
+    "recharts": "^3.5.1",
     "yet-another-react-lightbox": "^3.25.0"
   },
   "devDependencies": {
@@ -37,6 +40,7 @@
     "jsdom": "^25.0.1",
     "vite": "^7.1.2",
     "vite-plugin-pwa": "^1.2.0",
-    "vitest": "^4.0.10"
+    "vitest": "^4.0.10",
+    "workbox-window": "^7.4.0"
   }
 }

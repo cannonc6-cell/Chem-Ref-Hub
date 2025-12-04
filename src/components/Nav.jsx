@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import ThemeToggle from "./ThemeToggle";
 import { useAuth } from "../context/AuthContext";
 
 function Nav({ searchValue, onSearchChange, showSearch = false }) {
@@ -9,18 +8,23 @@ function Nav({ searchValue, onSearchChange, showSearch = false }) {
   return (
     <header className="header" style={{
       height: 'var(--header-height)',
-      backgroundColor: 'var(--header-bg)',
+      background: 'linear-gradient(135deg, var(--primary) 0%, var(--accent) 80%)',
       borderBottom: '1px solid var(--header-border)',
       display: 'flex',
       alignItems: 'center',
+      justifyContent: 'space-between',
       padding: '0 2rem',
-      position: 'sticky',
+      position: 'fixed',
       top: 0,
-      zIndex: 900,
-      width: '100%'
+      left: 0,
+      right: 0,
+      zIndex: 1100,
+      width: '100%',
+      color: 'var(--text-on-primary)',
+      boxShadow: '0 10px 25px -10px rgba(15, 23, 42, 0.35)'
     }}>
       {/* Search Bar */}
-      <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+  <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
         {showSearch && (
           <div style={{ position: 'relative', width: '100%', maxWidth: '600px' }}>
             <div style={{
@@ -28,7 +32,7 @@ function Nav({ searchValue, onSearchChange, showSearch = false }) {
               left: '12px',
               top: '50%',
               transform: 'translateY(-50%)',
-              color: 'var(--text-tertiary)',
+                color: 'rgba(255,255,255,0.75)',
               pointerEvents: 'none',
               display: 'flex',
               alignItems: 'center'
@@ -46,21 +50,21 @@ function Nav({ searchValue, onSearchChange, showSearch = false }) {
                 width: '100%',
                 padding: '0.625rem 1rem 0.625rem 2.5rem',
                 borderRadius: 'var(--radius-full)',
-                border: '1px solid var(--border-light)',
-                backgroundColor: 'var(--bg-secondary)',
-                color: 'var(--text-primary)',
+                border: '1px solid rgba(255,255,255,0.35)',
+                backgroundColor: 'rgba(15,23,42,0.35)',
+                color: 'var(--text-on-primary)',
                 fontSize: '0.9375rem',
                 outline: 'none',
                 transition: 'all var(--transition-fast)'
               }}
               onFocus={(e) => {
-                e.target.style.backgroundColor = 'var(--surface)';
-                e.target.style.borderColor = 'var(--primary-light)';
-                e.target.style.boxShadow = '0 0 0 3px var(--primary-lighter)';
+                e.target.style.backgroundColor = 'rgba(15,23,42,0.6)';
+                e.target.style.borderColor = 'var(--accent-light)';
+                e.target.style.boxShadow = '0 0 0 3px rgba(244,114,182,0.5)';
               }}
               onBlur={(e) => {
-                e.target.style.backgroundColor = 'var(--bg-secondary)';
-                e.target.style.borderColor = 'var(--border-light)';
+                e.target.style.backgroundColor = 'rgba(15,23,42,0.35)';
+                e.target.style.borderColor = 'rgba(255,255,255,0.35)';
                 e.target.style.boxShadow = 'none';
               }}
             />
@@ -70,8 +74,6 @@ function Nav({ searchValue, onSearchChange, showSearch = false }) {
 
       {/* Right Actions */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        <ThemeToggle />
-
         {/* Notification Bell (Mock) */}
         <button
           style={{

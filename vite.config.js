@@ -7,25 +7,52 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
-      manifest: {
-        name: 'ChemRef Hub',
-        short_name: 'ChemRef',
-        description: 'Chemical Reference & Logbook',
-        theme_color: '#2A5C5E',
-        icons: [
+      registerType: 'prompt',
+      includeAssets: ['favicon.ico', 'offline.html'],
+      manifestFilename: 'manifest.json',
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,jpg,webp,svg,json}'],
+        runtimeCaching: [
           {
-            src: 'assets/logo.svg',
-            sizes: '192x192',
-            type: 'image/svg+xml'
+            urlPattern: ({ request }) => request.destination === 'document',
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'html-cache',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 24 * 60 * 60 // 24 hours
+              }
+            }
           },
           {
-            src: 'assets/logo.svg',
-            sizes: '512x512',
-            type: 'image/svg+xml'
+            urlPattern: ({ request }) => request.destination === 'script' || request.destination === 'style',
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'assets-cache',
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 7 * 24 * 60 * 60 // 7 days
+              }
+            }
+          },
+          {
+            urlPattern: ({ url }) => url.pathname.includes('chemical_data.json'),
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'data-cache',
+              expiration: {
+                maxEntries: 5,
+                maxAgeSeconds: 24 * 60 * 60 // 24 hours
+              }
+            }
           }
-        ]
+        ],
+        navigateFallback: '/offline.html',
+        navigateFallbackDenylist: [/^\/api/]
+      },
+      devOptions: {
+        enabled: true,
+        type: 'module'
       }
     })
   ],

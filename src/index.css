@@ -4,14 +4,14 @@
    ============================================ */
 
 :root {
-    /* Primary Colors - Blue/Indigo Theme */
-    --primary: #6366F1;
-    --primary-dark: #4F46E5;
+    /* Primary Colors - Indigo/Pink Gradient Theme */
+    --primary: #6366F1; /* Indigo */
+    --primary-dark: #4C1D95; /* Deep purple for hero/footer */
     --primary-light: #818CF8;
     --primary-lighter: #A5B4FC;
 
-    /* Accent Colors */
-    --accent: #EC4899;
+    /* Accent Colors - match dashboard hero banner */
+    --accent: #EC4899; /* Pink */
     --accent-light: #F472B6;
 
     /* Background Colors */
@@ -102,7 +102,9 @@ body {
         'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: var(--bg-primary);
+    background: radial-gradient(circle at top left, rgba(99,102,241,0.08), transparent 55%),
+        radial-gradient(circle at top right, rgba(236,72,153,0.08), transparent 55%),
+        var(--bg-primary);
     color: var(--text-primary);
     line-height: 1.6;
     font-size: 15px;

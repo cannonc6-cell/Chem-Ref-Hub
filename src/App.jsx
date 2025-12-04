@@ -5,6 +5,9 @@ import Footer from './components/Footer.jsx';
 import Sidebar from './components/Sidebar.jsx';
 import BackToTop from './components/BackToTop.jsx';
 import './styles/sidebar-navigation.css';
+import './styles/color-accents.css';
+import '.\/styles\/dashboard-graphics.css';
+import './styles/professional-ui.css';
 import Chemicals from './pages/Chemicals.jsx';
 import AddChemical from './pages/AddChemical.jsx';
 import Dashboard from './pages/Dashboard.jsx';
@@ -19,6 +22,10 @@ import Glossary from './pages/Glossary.jsx';
 import NotFound from './pages/NotFound.jsx';
 import UserProfile from './pages/UserProfile.jsx';
 import { Toaster } from 'react-hot-toast';
+import { SearchProvider, useSearch } from './context/SearchContext';
+import SearchModal from './components/search/SearchModal';
+import InstallPrompt from './components/InstallPrompt';
+import UpdateNotification from './components/UpdateNotification';
 
 function AppContent() {
   const location = useLocation();
@@ -71,6 +78,42 @@ function AppContent() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [navigate]);
+
+  // Search modal state and keyboard shortcut (Cmd/Ctrl + K)
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+  const { buildSearchIndex } = useSearch();
+
+  // Build search index when app loads
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const chemRes = await fetch(`${import.meta.env.BASE_URL || '/'}chemical_data.json`);
+        const chemicals = chemRes.ok ? await chemRes.json() : [];
+        const userChems = JSON.parse(localStorage.getItem('userChemicals') || '[]');
+        const allChemicals = [...chemicals, ...(Array.isArray(userChems) ? userChems : [])];
+
+        const logbook = JSON.parse(localStorage.getItem('chemicalLogbook') || '[]');
+
+        buildSearchIndex(allChemicals, logbook);
+      } catch (error) {
+        console.error('Error loading search data:', error);
+      }
+    };
+    loadData();
+  }, [buildSearchIndex]);
+
+  // Global search keyboard shortcut (Cmd/Ctrl + K)
+  useEffect(() => {
+    const handleSearchShortcut = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setIsSearchModalOpen(true);
+      }
+    };
+
+    window.addEventListener('keydown', handleSearchShortcut);
+    return () => window.removeEventListener('keydown', handleSearchShortcut);
+  }, []);
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
@@ -137,9 +180,18 @@ function App() {
   // Main App Component
   return (
     <Router>
-      <AppContent />
+      <SearchProvider>
+        <AppContent />
+      </SearchProvider>
     </Router>
   );
 }
 
 export default App;
+
+
+
+
+
+
+

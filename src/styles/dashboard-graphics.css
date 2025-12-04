@@ -1,0 +1,38 @@
+/* Professional Chemistry Theme - Floating Orbs Update */
+
+.gradient-orb-1 {
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(6, 182, 212, 0.4), transparent);
+    top: 10%;
+    right: 5%;
+}
+
+.gradient-orb-2 {
+    width: 180px;
+    height: 180px;
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.4), transparent);
+    bottom: 20%;
+    left: 10%;
+    animation-delay: 2s;
+}
+
+.gradient-orb-3 {
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, rgba(12, 74, 110, 0.4), transparent);
+    top: 50%;
+    left: 30%;
+    animation-delay: 4s;
+}
+
+/* Update stat badges with chemistry colors */
+.stat-badge {
+    background: linear-gradient(135deg, rgba(12, 74, 110, 0.1), rgba(6, 182, 212, 0.1));
+    border: 2px solid;
+    border-image: linear-gradient(90deg, #0C4A6E, #06B6D4) 1;
+}
+
+.stat-badge-icon {
+    background: linear-gradient(135deg, #0C4A6E, #06B6D4);
+}

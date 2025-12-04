@@ -5,7 +5,7 @@
 .sidebar {
     position: fixed;
     left: 0;
-    top: 0;
+    top: var(--header-height);
     bottom: 0;
     width: var(--sidebar-width);
     background-color: var(--sidebar-bg);
@@ -193,4 +193,21 @@
     .sidebar-backdrop.show {
         display: block;
     }
+}
+/* ============================================
+   COLORFUL ACCENT ENHANCEMENTS
+   ============================================ */
+.sidebar-nav-item.active {
+    background: linear-gradient(90deg, rgba(139, 92, 246, 0.15), transparent);
+    color: white !important;
+    border-left: 3px solid transparent;
+    border-image: linear-gradient(180deg, var(--purple), var(--pink)) 1 !important;
+}
+
+.sidebar-nav-item.active .sidebar-nav-item-icon {
+    background: var(--gradient-purple);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 2px 4px rgba(139, 92, 246, 0.3));
 }

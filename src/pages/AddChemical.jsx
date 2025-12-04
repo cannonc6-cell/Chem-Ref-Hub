@@ -15,7 +15,9 @@ const FormSection = ({ title, isOpen, onToggle, children }) => {
 			borderRadius: 'var(--radius-lg)',
 			marginBottom: '1rem',
 			backgroundColor: 'var(--surface)',
-			overflow: 'hidden'
+			overflow: 'hidden',
+			boxShadow: '0 12px 30px -18px rgba(15,23,42,0.45)',
+			position: 'relative'
 		}}>
 			<button
 				type="button"
@@ -25,14 +27,14 @@ const FormSection = ({ title, isOpen, onToggle, children }) => {
 					display: 'flex',
 					justifyContent: 'space-between',
 					alignItems: 'center',
-					padding: '1.25rem',
-					background: 'none',
+					padding: '1.25rem 1.5rem',
+					background: 'linear-gradient(135deg, rgba(76,29,149,0.12), rgba(236,72,153,0.12))',
 					border: 'none',
 					cursor: 'pointer',
 					textAlign: 'left'
 				}}
 			>
-				<h3 style={{ fontSize: '1.125rem', fontWeight: 600, margin: 0, color: 'var(--text-primary)' }}>{title}</h3>
+				<h3 style={{ fontSize: '1.125rem', fontWeight: 600, margin: 0, color: 'var(--primary-dark)' }}>{title}</h3>
 				<svg
 					width="20"
 					height="20"
@@ -148,10 +150,23 @@ function AddChemical() {
 	};
 
 	return (
-		<div className="add-chemical-page" style={{ maxWidth: '800px', margin: '0 auto' }}>
+		<div className="add-chemical-page" style={{ maxWidth: '900px', margin: '0 auto', position: 'relative' }}>
+			<div style={{
+				position: 'absolute',
+				top: '-40px',
+				right: '-80px',
+				width: '260px',
+				height: '260px',
+				pointerEvents: 'none',
+				opacity: 0.35,
+				backgroundImage: "url('data:image/svg+xml,%3Csvg width=\'260\' height=\'260\' viewBox=\'0 0 260 260\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cdefs%3E%3ClinearGradient id=\'g2\' x1=\'0\' y1=\'0\' x2=\'1\' y2=\'1\'%3E%3Cstop stop-color=\'%236366F1\'/%3E%3Cstop offset=\'1\' stop-color=\'%23EC4899\'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg fill=\'none\' stroke=\'url(%23g2)\' stroke-width=\'1.4\' stroke-opacity=\'0.7\'%3E%3Cpolygon points=\'40,20 80,40 80,80 40,100 0,80 0,40\'/%3E%3Cpolygon points=\'190,40 230,60 230,100 190,120 150,100 150,60\'/%3E%3Cpolygon points=\'110,150 150,170 150,210 110,230 70,210 70,170\'/%3E%3Ccircle cx=\'210\' cy=\'190\' r=\'10\'/%3E%3Ccircle cx=\'40\' cy=\'170\' r=\'8\'/%3E%3C/g%3E%3C/svg%3E')",
+				backgroundRepeat: 'no-repeat',
+				backgroundSize: 'contain',
+				zIndex: 0
+			}} />
 			<div style={{ marginBottom: '2rem' }}>
-				<h1 style={{ fontSize: '1.875rem', fontWeight: 700, marginBottom: '0.5rem' }}>Add New Chemical Record</h1>
-				<p style={{ color: 'var(--text-secondary)' }}>
+				<h1 style={{ fontSize: '1.875rem', fontWeight: 700, marginBottom: '0.5rem', color: 'var(--primary-dark)' }}>Add New Chemical Record</h1>
+				<p style={{ color: 'var(--text-secondary)', borderLeft: '4px solid var(--accent)', paddingLeft: '0.75rem' }}>
 					Input detailed information for a new chemical entry, including general data, properties, hazard information, and inventory details.
 				</p>
 			</div>

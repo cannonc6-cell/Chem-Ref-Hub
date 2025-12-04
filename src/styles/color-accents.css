@@ -1,0 +1,407 @@
+/* ============================================
+   COLOR ACCENTS & ENHANCEMENTS
+   Vibrant colors to add visual interest
+   ============================================ */
+
+/* Additional Vibrant Color Variables */
+:root {
+    --purple: #8B5CF6;
+    --purple-light: #A78BFA;
+    --magenta: #EC4899;
+    --magenta-light: #F472B6;
+    --blue: #14B8A6;
+    --blue-light: #2DD4BF;
+    --violet: #F97316;
+    --violet-light: #FB923C;
+    --indigo: #6366F1;
+    --indigo-light: #818CF8;
+
+    /* Vibrant Gradients */
+    --gradient-purple: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%);
+    --gradient-pink: linear-gradient(135deg, #EC4899 0%, #F472B6 100%);
+    --gradient-teal: linear-gradient(135deg, #14B8A6 0%, #2DD4BF 100%);
+    --gradient-coral: linear-gradient(135deg, #F97316 0%, #FB923C 100%);
+    --gradient-indigo: linear-gradient(135deg, #6366F1 0%, #818CF8 100%);
+    --gradient-multi: linear-gradient(135deg, #8B5CF6 0%, #6366F1 33%, #EC4899 66%, #F97316 100%);
+    --gradient-sunrise: linear-gradient(135deg, #F97316 0%, #EC4899 50%, #8B5CF6 100%);
+    --gradient-ocean: linear-gradient(135deg, #14B8A6 0%, #3B82F6 50%, #8B5CF6 100%);
+}
+
+/* ============================================
+   STAT CARDS WITH COLORFUL ACCENTS
+   ============================================ */
+.stat-card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    border: 2px solid var(--border-light);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    /* border-color: transparent; */
+}
+
+.stat-card:hover::before {
+    width: 6px;
+}
+
+/* Stat Card Variants */
+.stat-card-purple::before {
+    background: var(--gradient-purple);
+}
+
+.stat-card-purple:hover {
+    border-color: var(--purple-light);
+    box-shadow: 0 12px 24px rgba(139, 92, 246, 0.25);
+}
+
+.stat-card-teal::before {
+    background: var(--gradient-teal);
+}
+
+.stat-card-teal:hover {
+    border-color: var(--blue-light);
+    box-shadow: 0 12px 24px rgba(59, 130, 246, 0.25);
+}
+
+.stat-card-pink::before {
+    background: var(--gradient-pink);
+}
+
+.stat-card-pink:hover {
+    border-color: var(--magenta-light);
+    box-shadow: 0 12px 24px rgba(236, 72, 153, 0.25);
+}
+
+.stat-card-indigo::before {
+    background: var(--gradient-indigo);
+}
+
+.stat-card-indigo:hover {
+    border-color: var(--indigo-light);
+    box-shadow: 0 12px 24px rgba(99, 102, 241, 0.25);
+}
+
+.stat-card-coral::before {
+    background: var(--gradient-coral);
+}
+
+.stat-card-coral:hover {
+    border-color: var(--violet-light);
+    box-shadow: 0 12px 24px rgba(124, 58, 237, 0.25);
+}
+
+/* Colorful Icon Backgrounds */
+.icon-bg-purple {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(167, 139, 250, 0.15) 100%);
+    color: var(--purple);
+}
+
+.icon-bg-teal {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(45, 212, 191, 0.15) 100%);
+    color: var(--blue);
+}
+
+.icon-bg-pink {
+    background: linear-gradient(135deg, rgba(236, 72, 153, 0.1) 0%, rgba(244, 114, 182, 0.15) 100%);
+    color: var(--magenta);
+}
+
+.icon-bg-coral {
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(251, 146, 60, 0.15) 100%);
+    color: var(--violet);
+}
+
+.icon-bg-indigo {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(129, 140, 248, 0.15) 100%);
+    color: var(--indigo);
+}
+
+/* ============================================
+   ENHANCED BADGES WITH GRADIENTS
+   ============================================ */
+.badge-purple {
+    background: var(--gradient-purple);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.875rem;
+    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+}
+
+.badge-teal {
+    background: var(--gradient-teal);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.875rem;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.badge-pink {
+    background: var(--gradient-pink);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.875rem;
+    box-shadow: 0 2px 8px rgba(236, 72, 153, 0.3);
+}
+
+.badge-coral {
+    background: var(--gradient-coral);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.875rem;
+    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.3);
+}
+
+/* ============================================
+   COLORFUL BUTTON VARIANTS
+   ============================================ */
+.btn-purple {
+    background: var(--gradient-purple);
+    color: white;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-purple:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(139, 92, 246, 0.3);
+    filter: brightness(1.1);
+}
+
+.btn-teal {
+    background: var(--gradient-teal);
+    color: white;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-teal:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
+    filter: brightness(1.1);
+}
+
+.btn-pink {
+    background: var(--gradient-pink);
+    color: white;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-pink:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(236, 72, 153, 0.3);
+    filter: brightness(1.1);
+}
+
+/* ============================================
+   COLORFUL LINK ACCENT
+   ============================================ */
+.link-accent {
+    background: var(--gradient-multi);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.link-accent:hover {
+    filter: brightness(1.2);
+    text-decoration: none;
+}
+
+/* ============================================
+   ENHANCED CARD WITH GRADIENT BORDER
+   ============================================ */
+.card-gradient-border {
+    position: relative;
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    padding: 2px;
+    background-clip: padding-box;
+    border: 2px solid transparent;
+}
+
+.card-gradient-border::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: -1;
+    margin: -2px;
+    border-radius: inherit;
+    background: var(--gradient-multi);
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+}
+
+.card-gradient-border:hover::before {
+    opacity: 1;
+}
+
+/* ============================================
+   ACCENT DOTS/DECORATIONS
+   ============================================ */
+.accent-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 0.5rem;
+}
+
+.accent-dot-purple {
+    background: var(--gradient-purple);
+    box-shadow: 0 2px 4px rgba(139, 92, 246, 0.4);
+}
+
+.accent-dot-teal {
+    background: var(--gradient-teal);
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.4);
+}
+
+.accent-dot-pink {
+    background: var(--gradient-pink);
+    box-shadow: 0 2px 4px rgba(236, 72, 153, 0.4);
+}
+
+/* ============================================
+   GRADIENT TEXT
+   ============================================ */
+.text-gradient-purple {
+    background: var(--gradient-purple);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.text-gradient-multi {
+    background: var(--gradient-multi);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.text-gradient-ocean {
+    background: var(--gradient-ocean);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+/* ============================================
+   GLOBAL ENHANCEMENTS
+   ============================================ */
+/* Colorful Top Borders */
+.border-top-gradient {
+  border-top: 3px solid transparent !important;
+  border-image: linear-gradient(90deg, var(--purple), var(--magenta), var(--blue)) 1 !important;
+}
+
+/* Enhanced Buttons Site-Wide */
+.btn-gradient {
+  background: var(--gradient-multi) !important;
+  color: white !important;
+  border: none !important;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+.btn-gradient:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
+  filter: brightness(1.1);
+}
+
+/* Chemical Cards with Colorful Accents */
+.chemical-card {
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chemical-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--gradient-multi);
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.chemical-card:hover::before {
+  opacity: 1;
+}
+
+.chemical-card:nth-child(4n+1):hover {
+  border-color: var(--purple-light);
+  box-shadow: 0 10px 30px rgba(139, 92, 246, 0.25);
+}
+
+.chemical-card:nth-child(4n+1)::before {
+  background: var(--gradient-purple);
+}
+
+.chemical-card:nth-child(4n+2):hover {
+  border-color: var(--blue-light);
+  box-shadow: 0 10px 30px rgba(59, 130, 246, 0.25);
+}
+
+.chemical-card:nth-child(4n+2)::before {
+  background: var(--gradient-teal);
+}
+
+.chemical-card:nth-child(4n+3):hover {
+  border-color: var(--magenta-light);
+  box-shadow: 0 10px 30px rgba(236, 72, 153, 0.25);
+}
+
+.chemical-card:nth-child(4n+3)::before {
+  background: var(--gradient-pink);
+}
+
+.chemical-card:nth-child(4n+4):hover {
+  border-color: var(--indigo-light);
+  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.25);
+}
+
+.chemical-card:nth-child(4n+4)::before {
+  background: var(--gradient-indigo);
+}
+
+
+/* Ensure buttons/links inside stat cards are clickable */
+.stat-card a,
+.stat-card button {
+    position: relative;
+    z-index: 10;
+    cursor: pointer;
+}
+

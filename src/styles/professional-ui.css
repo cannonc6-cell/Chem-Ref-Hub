@@ -1,0 +1,282 @@
+/* ============================================
+   BALANCED PROFESSIONAL PALETTE
+   Blue + Gray + Amber + Purple
+   ============================================ */
+
+:root {
+    /* PRIMARY - Deep Blue (30% usage - main actions) */
+    --deep-blue: #0369A1;
+    --deep-blue-light: #0EA5E9;
+    --deep-blue-dark: #0C4A6E;
+
+    /* SECONDARY - Slate Gray (50% usage - neutral elements) */
+    --slate: #64748B;
+    --slate-light: #94A3B8;
+    --slate-dark: #475569;
+    --slate-bg: #F1F5F9;
+
+    /* ACCENT 1 - Warm Amber (15% usage - highlights) */
+    --amber: #F59E0B;
+    --amber-light: #FCD34D;
+    --amber-dark: #D97706;
+
+    /* ACCENT 2 - Soft Purple (5% usage - special accents) */
+    --purple: #8B5CF6;
+    --purple-light: #A78BFA;
+    --purple-dark: #7C3AED;
+
+    /* NEUTRALS */
+    --charcoal: #0F172A;
+    --white: #FFFFFF;
+    --bg-soft: #F8FAFC;
+    --border-light: #E2E8F0;
+
+    /* SEMANTIC */
+    --success: #10B981;
+    --warning: #F59E0B;
+    --danger: #EF4444;
+}
+
+/* Update base variables */
+:root {
+    --primary: #0369A1 !important;
+    --accent: #64748B !important;
+    --text-primary: #0F172A !important;
+    --text-secondary: #64748B !important;
+}
+
+/* ============================================
+   BUTTONS - Balanced Colors
+   ============================================ */
+
+/* Primary buttons - Deep Blue (limited use) */
+.btn-primary {
+    background: linear-gradient(135deg, var(--deep-blue), var(--deep-blue-light)) !important;
+    color: white !important;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, var(--deep-blue-light), var(--purple)) !important;
+}
+
+/* Default buttons - Slate Gray (main usage) */
+.btn,
+button:not(.btn-primary):not(.btn-outline-primary) {
+    background: linear-gradient(135deg, var(--slate), var(--slate-light)) !important;
+    color: white !important;
+}
+
+.btn:hover,
+button:not(.btn-primary):hover {
+    background: linear-gradient(135deg, var(--slate-light), var(--purple-light)) !important;
+}
+
+/* Outline buttons - Mix of colors */
+.btn-outline-primary {
+    border: 2px solid var(--deep-blue) !important;
+    color: var(--deep-blue) !important;
+}
+
+.btn-outline-secondary {
+    border: 2px solid var(--slate) !important;
+    color: var(--slate) !important;
+}
+
+/* Accent buttons - Amber for important actions */
+.btn-accent,
+.btn-warning {
+    background: linear-gradient(135deg, var(--amber), var(--amber-light)) !important;
+    color: white !important;
+}
+
+/* ============================================
+   CARDS - Slate with colored accents
+   ============================================ */
+
+.card,
+.info-card {
+    background: var(--white);
+    border: 1px solid var(--border-light) !important;
+}
+
+.card:hover {
+    border-color: var(--slate-light) !important;
+    box-shadow: 0 10px 25px rgba(100, 116, 139, 0.15) !important;
+}
+
+/* Card variations with different accent colors */
+.card.accent-blue::before {
+    background: linear-gradient(180deg, var(--deep-blue), transparent);
+}
+
+.card.accent-amber::before {
+    background: linear-gradient(180deg, var(--amber), transparent);
+}
+
+.card.accent-purple::before {
+    background: linear-gradient(180deg, var(--purple), transparent);
+}
+
+/* ============================================
+   STAT CARDS - Varied accent colors
+   ============================================ */
+
+.stat-card:nth-child(3n+1)::before {
+    background: linear-gradient(90deg, var(--deep-blue), var(--purple));
+}
+
+.stat-card:nth-child(3n+2)::before {
+    background: linear-gradient(90deg, var(--amber), var(--amber-light));
+}
+
+.stat-card:nth-child(3n+3)::before {
+    background: linear-gradient(90deg, var(--slate), var(--slate-light));
+}
+
+/* ============================================
+   LINKS - Balanced colors
+   ============================================ */
+
+a:not(.btn) {
+    color: var(--deep-blue) !important;
+}
+
+a:not(.btn):hover {
+    color: var(--purple) !important;
+}
+
+/* Secondary links */
+a.secondary-link {
+    color: var(--slate) !important;
+}
+
+/* ============================================
+   BADGES - Variety of colors
+   ============================================ */
+
+.badge {
+    background: linear-gradient(135deg, var(--slate), var(--slate-light)) !important;
+}
+
+.badge-primary {
+    background: linear-gradient(135deg, var(--deep-blue), var(--purple)) !important;
+}
+
+.badge-accent {
+    background: linear-gradient(135deg, var(--amber), var(--amber-light)) !important;
+}
+
+.badge-success {
+    background: var(--success) !important;
+}
+
+/* ============================================
+   FORMS - Slate focused
+   ============================================ */
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--slate) !important;
+    box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.1) !important;
+}
+
+/* Special inputs get blue */
+input[type="submit"]:focus,
+input[type="button"]:focus {
+    border-color: var(--deep-blue) !important;
+    box-shadow: 0 0 0 3px rgba(3, 105, 161, 0.1) !important;
+}
+
+/* ============================================
+   NAVIGATION - Slate with blue accents
+   ============================================ */
+
+.nav-link {
+    color: var(--slate) !important;
+}
+
+.nav-link:hover {
+    color: var(--deep-blue) !important;
+}
+
+.nav-link.active {
+    background: linear-gradient(90deg, rgba(139, 92, 246, 0.08), transparent) !important;
+    border-left: 3px solid var(--purple) !important;
+    color: var(--purple) !important;
+}
+
+/* ============================================
+   CHEMICAL CARDS - Rotating accent colors
+   ============================================ */
+
+.chemical-card:nth-child(4n+1)::before {
+    background: linear-gradient(180deg, var(--deep-blue), transparent);
+}
+
+.chemical-card:nth-child(4n+2)::before {
+    background: linear-gradient(180deg, var(--amber), transparent);
+}
+
+.chemical-card:nth-child(4n+3)::before {
+    background: linear-gradient(180deg, var(--purple), transparent);
+}
+
+.chemical-card:nth-child(4n+4)::before {
+    background: linear-gradient(180deg, var(--slate), transparent);
+}
+
+.chemical-card:hover {
+    border-color: var(--slate-light) !important;
+}
+
+/* ============================================
+   HEADERS - Charcoal with colorful accents
+   ============================================ */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: var(--charcoal) !important;
+}
+
+h1::before,
+h2::before {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 1.2em;
+    background: linear-gradient(180deg, var(--amber), var(--purple));
+    margin-right: 0.5rem;
+    border-radius: 2px;
+}
+
+/* ============================================
+   BACKGROUNDS - Subtle patterns
+   ============================================ */
+
+.bg-pattern {
+    background-color: var(--bg-soft);
+    background-image:
+        linear-gradient(30deg, rgba(100, 116, 139, 0.03) 12%, transparent 12.5%, transparent 87%, rgba(100, 116, 139, 0.03) 87.5%);
+}
+
+/* ============================================
+   SELECTION - Purple accent
+   ============================================ */
+
+::selection {
+    background: rgba(139, 92, 246, 0.2) !important;
+    color: var(--charcoal) !important;
+}
+
+/* ============================================
+   SCROLLBAR - Slate with purple
+   ============================================ */
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--slate), var(--purple)) !important;
+}

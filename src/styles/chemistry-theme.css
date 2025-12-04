@@ -1,0 +1,211 @@
+/* ============================================
+   PROFESSIONAL CHEMISTRY COLOR PALETTE
+   Theme: Laboratory & Chemical Solutions
+   Sophisticated, mature, science-inspired
+   ============================================ */
+
+:root {
+    /* PRIMARY - Deep Ocean Blue (Professional Base) */
+    --chem-navy: #0C4A6E;
+    /* Deep ocean blue */
+    --chem-navy-dark: #075985;
+    /* Darker navy */
+    --chem-navy-light: #0369A1;
+    /* Lighter navy */
+
+    /* ACCENT - Bright Cyan/Teal (Glowing Chemical Solutions) */
+    --chem-cyan: #06B6D4;
+    /* Bright cyan */
+    --chem-cyan-light: #22D3EE;
+    /* Light cyan */
+    --chem-teal: #0EA5E9;
+    /* Electric teal */
+    --chem-teal-dark: #0284C7;
+    /* Dark teal */
+
+    /* SECONDARY - Emerald Green (Chemical Indicators) */
+    --chem-emerald: #059669;
+    /* Rich emerald */
+    --chem-emerald-light: #10B981;
+    /* Light emerald */
+    --chem-green: #047857;
+    /* Forest green */
+
+    /* HIGHLIGHT - Amber (Flame Tests, Reactions) */
+    --chem-amber: #D97706;
+    /* Rich amber */
+    --chem-amber-light: #F59E0B;
+    /* Bright amber */
+    --chem-gold: #FBBF24;
+    /* Golden yellow */
+
+    /* METAL - Steel Gray (Lab Equipment) */
+    --chem-steel: #475569;
+    /* Steel gray */
+    --chem-steel-light: #64748B;
+    /* Light steel */
+    --chem-silver: #94A3B8;
+    /* Silver */
+
+    /* CHEMISTRY-THEMED GRADIENTS */
+    --gradient-ocean: linear-gradient(135deg, #0C4A6E 0%, #06B6D4 50%, #0EA5E9 100%);
+    --gradient-solution: linear-gradient(135deg, #06B6D4 0%, #10B981 100%);
+    --gradient-reaction: linear-gradient(135deg, #059669 0%, #D97706 100%);
+    --gradient-lab: linear-gradient(135deg, #0C4A6E 0%, #059669 50%, #06B6D4 100%);
+    --gradient-chemical: linear-gradient(135deg, #0EA5E9 0%, #10B981 33%, #F59E0B 66%, #06B6D4 100%);
+    --gradient-beaker: linear-gradient(135deg, #0C4A6E 0%, #0EA5E9 100%);
+    --gradient-indicator: linear-gradient(135deg, #10B981 0%, #06B6D4 100%);
+    --gradient-flame: linear-gradient(135deg, #D97706 0%, #F59E0B 100%);
+}
+
+/* Update existing stat card classes with new chemistry colors */
+.stat-card-purple,
+.stat-card-blue {
+    border-color: var(--chem-navy-light);
+}
+
+.stat-card-purple::before,
+.stat-card-blue::before {
+    background: var(--gradient-ocean);
+}
+
+.stat-card-purple:hover,
+.stat-card-blue:hover {
+    border-color: var(--chem-cyan);
+    box-shadow: 0 8px 20px rgba(6, 182, 212, 0.25);
+}
+
+.stat-card-magenta,
+.stat-card-teal,
+.stat-card-cyan {
+    border-color: var(--chem-teal-dark);
+}
+
+.stat-card-magenta::before,
+.stat-card-teal::before,
+.stat-card-cyan::before {
+    background: var(--gradient-solution);
+}
+
+.stat-card-magenta:hover,
+.stat-card-teal:hover,
+.stat-card-cyan:hover {
+    border-color: var(--chem-cyan-light);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.25);
+}
+
+.stat-card-pink,
+.stat-card-green,
+.stat-card-emerald {
+    border-color: var(--chem-emerald-light);
+}
+
+.stat-card-pink::before,
+.stat-card-green::before,
+.stat-card-emerald::before {
+    background: var(--gradient-indicator);
+}
+
+.stat-card-pink:hover,
+.stat-card-green:hover,
+.stat-card-emerald:hover {
+    border-color: var(--chem-emerald-light);
+    box-shadow: 0 8px 20px rgba(5, 150, 105, 0.25);
+}
+
+/* Icon backgrounds - Chemistry colors */
+.icon-bg-purple,
+.icon-bg-blue {
+    background: linear-gradient(135deg, rgba(12, 74, 110, 0.1) 0%, rgba(6, 182, 212, 0.15) 100%);
+    color: var(--chem-navy);
+}
+
+.icon-bg-magenta,
+.icon-bg-teal,
+.icon-bg-cyan,
+.icon-bg-pink {
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(16, 185, 129, 0.15) 100%);
+    color: var(--chem-cyan);
+}
+
+.icon-bg-indigo,
+.icon-bg-violet,
+.icon-bg-coral {
+    background: linear-gradient(135deg, rgba(5, 150, 105, 0.1) 0%, rgba(217, 119, 6, 0.15) 100%);
+    color: var(--chem-emerald);
+}
+
+/* Button gradients - Chemistry theme */
+.btn-gradient,
+.btn-purple,
+.btn-magenta,
+.btn-pink {
+    background: var(--gradient-ocean) !important;
+    box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+}
+
+.btn-gradient:hover,
+.btn-purple:hover,
+.btn-magenta:hover,
+.btn-pink:hover {
+    box-shadow: 0 8px 20px rgba(6, 182, 212, 0.4);
+}
+
+.btn-teal,
+.btn-blue {
+    background: var(--gradient-solution) !important;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-teal:hover,
+.btn-blue:hover {
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+}
+
+/* Gradient borders - Chemistry colors */
+.border-top-gradient {
+    border-top: 3px solid transparent !important;
+    border-image: linear-gradient(90deg, var(--chem-navy), var(--chem-cyan), var(--chem-emerald)) 1 !important;
+}
+
+/* Section divider - Chemistry gradient */
+.section-divider {
+    background: linear-gradient(90deg, var(--chem-navy) 0%, var(--chem-cyan) 33%, var(--chem-emerald) 66%, var(--chem-amber) 100%);
+}
+
+/* Chemical cards - Sophisticated colors */
+.chemical-card:nth-child(4n+1)::before {
+    background: var(--gradient-ocean);
+}
+
+.chemical-card:nth-child(4n+1):hover {
+    border-color: var(--chem-cyan);
+    box-shadow: 0 10px 30px rgba(6, 182, 212, 0.25);
+}
+
+.chemical-card:nth-child(4n+2)::before {
+    background: var(--gradient-solution);
+}
+
+.chemical-card:nth-child(4n+2):hover {
+    border-color: var(--chem-emerald-light);
+    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.25);
+}
+
+.chemical-card:nth-child(4n+3)::before {
+    background: var(--gradient-indicator);
+}
+
+.chemical-card:nth-child(4n+3):hover {
+    border-color: var(--chem-cyan-light);
+    box-shadow: 0 10px 30px rgba(34, 211, 238, 0.25);
+}
+
+.chemical-card:nth-child(4n+4)::before {
+    background: var(--gradient-reaction);
+}
+
+.chemical-card:nth-child(4n+4):hover {
+    border-color: var(--chem-amber-light);
+    box-shadow: 0 10px 30px rgba(217, 119, 6, 0.25);
+}

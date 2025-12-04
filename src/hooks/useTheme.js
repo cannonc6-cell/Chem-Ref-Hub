@@ -22,5 +22,6 @@ export function useTheme() {
         document.documentElement.setAttribute('data-theme', newTheme);
     };
 
-    return { theme, toggleTheme };
+// Dark mode has been removed; keep a no-op hook to avoid import errors.
+    return { theme: 'light', toggleTheme: () => {} };
 }
