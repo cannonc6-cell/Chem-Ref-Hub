@@ -6,6 +6,7 @@ import ExportToolbar from '../components/ExportToolbar';
 import SkeletonCard from '../components/SkeletonCard';
 import ChemicalCompareModal from '../components/ChemicalCompareModal';
 import BackupRestore from '../components/BackupRestore';
+import SEO from '../components/SEO';
 
 function Chemicals() {
 	const { chemicals, loading, error, favorites, toggleFavorite } = useChemicals();

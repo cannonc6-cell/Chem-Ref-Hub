@@ -7,6 +7,7 @@ import HazardDistribution from '../components/charts/HazardDistribution';
 import TopChemicals from '../components/charts/TopChemicals';
 import DashboardQuickActions from '../components/DashboardQuickActions';
 import { getActivityTimeline, getHazardDistribution, getMostUsedChemicals } from '../utils/analytics';
+import SEO from '../components/SEO';
 
 const BASE = import.meta.env.BASE_URL || '/';
 

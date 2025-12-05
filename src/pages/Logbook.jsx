@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import toast from 'react-hot-toast';
 import { LOG_TYPES, getAllLogTypes } from '../config/logTypes';
+import SEO from '../components/SEO';
 
 function Logbook() {
   // State
@@ -277,6 +278,10 @@ function Logbook() {
       {/* Header */}
       <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
+          <SEO
+            title="Lab Logbook"
+            description="Track experiments, chemical usage, maintenance, and incidents in your digital lab logbook."
+          />
           <h1 style={{ fontSize: '1.875rem', fontWeight: 700, marginBottom: '0.5rem' }}>Chemical Logbook</h1>
           <p style={{ color: 'var(--text-secondary)' }}>Track experiments, usage, disposal, and maintenance with specialized log types.</p>
         </div>
