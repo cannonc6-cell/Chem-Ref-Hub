@@ -278,11 +278,7 @@ function Chemicals() {
 			</div>
 
 			{/* Grid Layout */}
-			<div style={{
-				display: 'grid',
-				gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-				gap: '1.5rem'
-			}}>
+			<div className="chemical-grid">
 				{filteredChemicals.length > 0 ? (
 					filteredChemicals.map(chem => (
 						<ChemicalCard

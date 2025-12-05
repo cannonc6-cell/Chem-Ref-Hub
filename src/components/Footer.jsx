@@ -15,7 +15,7 @@ function Footer() {
               <li><Link to="/logbook">Chemical Logbook</Link></li>
             </ul>
           </div>
-          
+
           <div className="footer-section">
             <h3>Learn</h3>
             <ul>
@@ -39,7 +39,7 @@ function Footer() {
 
         <div className="footer-bottom">
           <p>&copy; {new Date().getFullYear()} ChemRef Hub. All rights reserved.</p>
-          <p className="footer-version">Version 1.0.0</p>
+          <p className="footer-version">Version 1.3.1</p>
         </div>
       </div>
     </footer>

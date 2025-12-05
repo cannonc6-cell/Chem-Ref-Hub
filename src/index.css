@@ -188,3 +188,8 @@ a:hover {
 .font-bold {
     font-weight: 700;
 }
+@media (max-width: 768px) {
+    :root {
+        --sidebar-width: 0px;
+    }
+}

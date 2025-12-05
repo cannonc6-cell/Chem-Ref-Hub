@@ -3,9 +3,9 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../styles/sidebar-navigation.css';
 
-function Sidebar() {
+function Sidebar({ mobileOpen, setMobileOpen }) {
     const [collapsed, setCollapsed] = useState(false);
-    const [mobileOpen, setMobileOpen] = useState(false);
+    // const [mobileOpen, setMobileOpen] = useState(false); // Managed by parent
     const { currentUser, logout } = useAuth();
     const navigate = useNavigate();
 

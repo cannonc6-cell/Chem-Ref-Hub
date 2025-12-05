@@ -113,15 +113,9 @@ function Dashboard() {
 	return (
 		<div className="dashboard-page">
 			{/* Hero Section */}
-			<div style={{
+			<div className="dashboard-hero" style={{
 				background: 'linear-gradient(135deg, #0369A1 0%, #8B5CF6 50%, #F59E0B 100%)',
-				borderRadius: 'var(--radius-xl)',
-				padding: '3rem',
-				color: 'white',
-				marginBottom: '2.5rem',
-				position: 'relative',
-				overflow: 'hidden',
-				boxShadow: '0 20px 60px rgba(3, 105, 161, 0.3)'
+				color: 'white'
 			}}>
 				<div style={{ position: 'relative', zIndex: 2, maxWidth: '600px' }}>
 					<h1 style={{ fontSize: '2.5rem', fontWeight: 700, marginBottom: '1rem', color: 'white' }}>
@@ -428,11 +422,7 @@ function Dashboard() {
 					<span style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Last 30 Days</span>
 				</div>
 
-				<div style={{
-					display: 'grid',
-					gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
-					gap: '2rem'
-				}}>
+				<div className="dashboard-analytics-grid">
 					{/* Activity Timeline Chart */}
 					<div className="card" style={{ padding: '1.5rem' }}>
 						<h3 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '1rem', color: 'var(--text-primary)' }}>
@@ -450,7 +440,7 @@ function Dashboard() {
 					</div>
 
 					{/* Top Used Chemicals Chart */}
-					<div className="card" style={{ padding: '1.5rem', gridColumn: 'span 2' }}>
+					<div className="card dashboard-span-2" style={{ padding: '1.5rem' }}>
 						<h3 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '1rem', color: 'var(--text-primary)' }}>
 							🧪 Most Used Chemicals
 						</h3>

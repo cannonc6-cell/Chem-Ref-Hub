@@ -445,7 +445,7 @@ function Logbook() {
         </div>
 
         <div className="table-responsive">
-          <table className="table mb-0">
+          <table className="table mb-0 table-card-view">
             <thead style={{ backgroundColor: 'var(--bg-secondary)' }}>
               <tr>
                 <th style={{ padding: '1rem', fontWeight: 600, fontSize: '0.875rem', color: 'var(--text-secondary)', width: '60px' }}>Type</th>

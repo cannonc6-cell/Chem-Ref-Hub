@@ -909,7 +909,7 @@ textarea:focus {
 }
 
 .footer-section h3 {
-  color: #fff;
+  color: #fff !important;
   font-size: var(--text-lg);
   font-weight: var(--font-semibold);
   margin-bottom: var(--space-2);
@@ -926,13 +926,13 @@ textarea:focus {
 }
 
 .footer-section ul li a {
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.7) !important;
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .footer-section ul li a:hover {
-  color: #fff;
+  color: #fff !important;
 }
 
 .footer-bottom {
@@ -1318,7 +1318,7 @@ textarea:focus {
   z-index: 0;
 }
 
-.chemical-grid > * {
+.chemical-grid>* {
   position: relative;
   z-index: 1;
 }
@@ -1385,6 +1385,119 @@ textarea:focus {
   }
 }
 
+/* ============================================
+   DASHBOARD RESPONSIVE UTILITIES
+   ============================================ */
+.dashboard-analytics-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .dashboard-analytics-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+}
+
+.dashboard-span-2 {
+  grid-column: span 1;
+}
+
+@media (min-width: 1024px) {
+  .dashboard-span-2 {
+    grid-column: span 2;
+  }
+}
+
+.dashboard-hero {
+  border-radius: var(--radius-xl);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(3, 105, 161, 0.3);
+}
+
+@media (min-width: 768px) {
+  .dashboard-hero {
+    padding: 3rem;
+  }
+}
 
 
+/* ============================================
+   RESPONSIVE DATA TABLES (CARD VIEW)
+   ============================================ */
+@media (max-width: 768px) {
+  .table-card-view thead {
+    display: none;
+  }
 
+  .table-card-view tbody tr {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-4);
+    position: relative;
+    padding: var(--space-4);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .table-card-view td {
+    display: block;
+    padding: var(--space-2) 0 !important;
+    border: none !important;
+    text-align: left;
+    width: 100%;
+  }
+
+  /* Specific handling for Logbook table columns */
+  .table-card-view td:first-child {
+    /* Log Icon */
+    position: absolute;
+    top: var(--space-4);
+    right: var(--space-4);
+    width: auto;
+    padding: 0 !important;
+  }
+
+  .table-card-view td:nth-child(2) {
+    /* Date */
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--space-2);
+    padding-right: 3rem !important;
+    /* Space for icon */
+  }
+
+  .table-card-view td:nth-child(3) {
+    /* Details */
+    border-top: 1px solid var(--border-light) !important;
+    margin-top: var(--space-2);
+    padding-top: var(--space-3) !important;
+  }
+
+  .table-card-view td:last-child {
+    /* Actions */
+    margin-top: var(--space-3);
+    text-align: right;
+    border-top: 1px solid var(--border-light) !important;
+    padding-top: var(--space-3) !important;
+  }
+}
+/* ============================================
+   MAIN CONTENT RESPONSIVE PADDING
+   ============================================ */
+.main-content-area {
+  padding: var(--space-4);
+  margin-top: calc(var(--header-height) + var(--space-4));
+}
+
+@media (min-width: 768px) {
+  .main-content-area {
+    padding: 2rem;
+    margin-top: calc(var(--header-height) + 2rem);
+  }
+}

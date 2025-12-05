@@ -31,6 +31,7 @@ import GlobalSearch from './components/GlobalSearch';
 function AppContent() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Global keyboard shortcuts: g+d/c/a/l for navigation
   useEffect(() => {
@@ -93,8 +94,10 @@ function AppContent() {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
-      {/* Sidebar Navigation */}
-      <Sidebar />
+      <Sidebar
+        mobileOpen={mobileMenuOpen}
+        setMobileOpen={setMobileMenuOpen}
+      />
 
       {/* Main Content Area */}
       <div style={{
@@ -103,10 +106,11 @@ function AppContent() {
         display: 'flex',
         flexDirection: 'column',
         width: 'calc(100% - var(--sidebar-width))', // Ensure width is correct
-        marginTop: 0 // Explicitly remove top margin
-      }}>
-        <Nav />
-        <main id="main-content" style={{ flex: 1, padding: '2rem' }}>
+        marginTop: 0, // Explicitly remove top margin
+        transition: 'margin-left 0.3s ease, width 0.3s ease'
+      }} className="main-content-wrapper">
+        <Nav onToggleSidebar={() => setMobileMenuOpen(!mobileMenuOpen)} />
+        <main id="main-content" className="main-content-area" style={{ flex: 1 }}>
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<Dashboard />} />

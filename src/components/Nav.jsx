@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-function Nav({ searchValue, onSearchChange, showSearch = false }) {
+function Nav({ searchValue, onSearchChange, showSearch = false, onToggleSidebar }) {
   const { user, authLoading, signInWithGoogle, signOutUser } = useAuth();
 
   return (
@@ -23,8 +23,28 @@ function Nav({ searchValue, onSearchChange, showSearch = false }) {
       color: 'var(--text-on-primary)',
       boxShadow: '0 10px 25px -10px rgba(15, 23, 42, 0.35)'
     }}>
+      {/* Mobile Menu Button - Visible only on mobile */}
+      <button
+        className="d-md-none me-3"
+        onClick={onToggleSidebar}
+        style={{
+          background: 'transparent',
+          border: 'none',
+          color: 'white',
+          padding: '4px',
+          display: 'flex',
+          alignItems: 'center',
+          marginRight: '1rem'
+        }}
+        aria-label="Open menu"
+      >
+        <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+
       {/* Search Bar */}
-  <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+      <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
         {showSearch && (
           <div style={{ position: 'relative', width: '100%', maxWidth: '600px' }}>
             <div style={{
@@ -32,7 +52,7 @@ function Nav({ searchValue, onSearchChange, showSearch = false }) {
               left: '12px',
               top: '50%',
               transform: 'translateY(-50%)',
-                color: 'rgba(255,255,255,0.75)',
+              color: 'rgba(255,255,255,0.75)',
               pointerEvents: 'none',
               display: 'flex',
               alignItems: 'center'
