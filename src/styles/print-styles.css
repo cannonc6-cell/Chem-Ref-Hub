@@ -1,0 +1,73 @@
+/* ============================================
+   ENHANCED PRINT STYLES
+   Professional print output for all pages
+   ============================================ */
+
+@media print {
+
+    /* Hide non-printable elements */
+    nav,
+    .navbar,
+    .sidebar,
+    .sidebar-nav,
+    header,
+    footer,
+    .no-print,
+    button,
+    .btn,
+    .export-toolbar,
+    .back-to-top,
+    .install-prompt {
+        display: none !important;
+    }
+
+    /* Reset page margins */
+    @page {
+        margin: 1.5cm;
+        size: A4;
+    }
+
+    body {
+        padding: 6pt;
+        text-align: left;
+    }
+
+    table thead {
+        background: #f0f0f0 !important;
+        font-weight: bold;
+    }
+
+    /* Page breaks */
+    .page-break {
+        page-break-after: always;
+    }
+
+    /* QR Code printing */
+    .qr-code-container {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    /* Print header/footer */
+    .print-header {
+        display: block;
+        text-align: center;
+        margin-bottom: 20pt;
+        border-bottom: 2px solid #333;
+        padding-bottom: 10pt;
+    }
+
+    /* Ensure colors print */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* Logbook entries */
+    .logbook-entry {
+        break-inside: avoid;
+        padding: 8pt;
+        margin-bottom: 8pt;
+        border: 1px solid #ccc;
+    }
+}

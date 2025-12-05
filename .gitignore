@@ -11,6 +11,7 @@ node_modules
 dist
 dist-ssr
 *.local
+*.log
 
 # Editor directories and files
 .vscode/*
@@ -22,6 +23,28 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment variables (SECURITY)
+.env
+.env.local
+.env.production.local
+.env.development.local
+.env.test.local
+
+# Build artifacts
+localhost%3A5173/
+
+# Firebase
+.firebase/
+firebase-debug.log
+firestore-debug.log
+
+# Vercel
+.vercel
+
+# Testing
+coverage/
+.nyc_output/
 
 .vercel
 .env*.local

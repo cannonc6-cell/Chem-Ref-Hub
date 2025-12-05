@@ -1,38 +1,84 @@
-## Chemical Reference Database
+# Chemical Reference Hub
 
-A professional React + Vite web app for chemists to browse, search, and manage a chemical database with user notes, favorites, import/export, and a lab logbook.
+**Version 1.3.0**
 
-### Features
-- Chemical directory: search by name, filter by tags, view details.
-- Favorites: star chemicals and filter by favorites.
-- Images: automatic file matching, lazy-loading, and fallback.
-- Import/Export: JSON import with merge/replace, export current dataset.
-- Add Chemicals: add your own to a local user list (stored in localStorage).
-- Logbook: record usage additions/disposals with inline validation.
-- Robust data loading: fetch from `/chemical_data.json` with automatic fallback to bundled `src/data/chemical_data.json`.
-- Accessibility: labeled inputs, keyboard-friendly controls.
+A comprehensive chemical reference and inventory management system built with React and Vite.
 
-### Getting started
-1. Install dependencies
-	- npm install
-2. Run the app (dev server)
-	- npm run dev
-3. Build for production
-	- npm run build
-4. Preview production build
-	- npm run preview
+## Features
 
-### Project structure
-- `public/chemical-images/` — image assets resolved by chemical names.
-- `public/chemical_data.json` — primary data source fetched at runtime.
-- `src/data/chemical_data.json` — bundled fallback data.
-- `src/pages/` — main pages: Chemicals, ChemicalDetail, AddChemical, Logbook, Dashboard, Safety.
-- `src/components/` — shared components like the navbar and footer.
+- Chemical database with search and filtering
+- Inventory tracking
+- QR code generation
+- PDF export capabilities
+- Dynamic logbook system
+- Advanced analytics
+- Global search (Cmd/Ctrl+K)
+- Dark mode support
+- PWA capabilities
 
-### Notes
-- User-added chemicals and favorites are stored locally in the browser (localStorage).
-- Importing JSON supports merge (by CAS/name/id) or full replace.
-- For multi-user persistence, connect a backend or cloud database (future work).
+## Getting Started
 
-### License
-This project is for educational and internal use. Add a license if publishing publicly.
+### Prerequisites
+
+- Node.js 18+ and npm
+- Firebase account (for authentication)
+
+### Installation
+
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Create `.env.local` from template:
+   ```bash
+   cp .env.example .env.local
+   ```
+
+4. Add your Firebase credentials to `.env.local`
+
+5. Run development server:
+   ```bash
+   npm run dev
+   ```
+
+### Building for Production
+
+```bash
+npm run build
+npm run preview
+```
+
+## Project Structure
+
+```
+├── config/          # Configuration files
+├── docs/            # Documentation
+├── public/          # Static assets
+├── src/
+│   ├── components/  # React components
+│   ├── pages/       # Page components
+│   ├── hooks/       # Custom React hooks
+│   ├── utils/       # Utility functions
+│   ├── styles/      # CSS files
+│   ├── context/     # React context
+│   ├── config/      # App configuration
+│   └── data/        # Static data
+└── ...
+
+```
+
+## Security
+
+- Firebase credentials should be stored in `.env.local`
+- Never commit `.env.local` to version control
+- Use environment variables for all sensitive data
+
+## License
+
+Private project - All rights reserved
+
+## Contributing
+
+This is a private project. For questions or issues, contact the maintainer.

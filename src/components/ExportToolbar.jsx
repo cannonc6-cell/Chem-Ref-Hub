@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { exportChemicalsToCSV } from '../utils/exportCSV';
+import { exportLogbookToCSV } from '../utils/exportCSV';
+import { generateBatchPDF } from '../utils/generatePDF';
 
 /**
  * Export Toolbar Component
@@ -11,9 +13,19 @@ function ExportToolbar({ data, type = 'chemicals', onExport }) {
     const handleCSVExport = () => {
         if (type === 'chemicals') {
             exportChemicalsToCSV(data);
+        } else if (type === 'logbook') {
+            exportLogbookToCSV(data);
         }
         setIsOpen(false);
         if (onExport) onExport('csv');
+    };
+
+    const handlePDFExport = () => {
+        if (type === 'chemicals' && data && data.length > 0) {
+            generateBatchPDF(data);
+        }
+        setIsOpen(false);
+        if (onExport) onExport('pdf');
     };
 
     const handlePrintView = () => {
@@ -110,6 +122,38 @@ function ExportToolbar({ data, type = 'chemicals', onExport }) {
                         {/* Divider */}
                         <div style={{ height: '1px', backgroundColor: 'var(--border-light)' }} />
 
+                        {/* PDF Export */}
+                        <button
+                            onClick={handlePDFExport}
+                            style={{
+                                width: '100%',
+                                padding: '0.75rem 1rem',
+                                border: 'none',
+                                background: 'transparent',
+                                textAlign: 'left',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.75rem',
+                                transition: 'background-color 0.15s'
+                            }}
+                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-soft)'}
+                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                        >
+                            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                            </svg>
+                            <div>
+                                <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>Export as PDF</div>
+                                <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                                    Professional safety sheets
+                                </div>
+                            </div>
+                        </button>
+
+                        {/* Divider */}
+                        <div style={{ height: '1px', backgroundColor: 'var(--border-light)' }} />
+
                         {/* Print View */}
                         <button
                             onClick={handlePrintView}
@@ -157,3 +201,4 @@ function ExportToolbar({ data, type = 'chemicals', onExport }) {
 }
 
 export default ExportToolbar;
+

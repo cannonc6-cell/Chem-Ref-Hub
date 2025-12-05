@@ -13,10 +13,14 @@ function UpdateNotification() {
         updateServiceWorker,
     } = useRegisterSW({
         onRegistered(registration) {
-            console.log('Service Worker registered:', registration);
+            if (import.meta.env.DEV) {
+                console.log('Service Worker registered:', registration);
+            }
         },
         onRegisterError(error) {
-            console.log('Service Worker registration error:', error);
+            if (import.meta.env.DEV) {
+                console.log('Service Worker registration error:', error);
+            }
         },
     });
 

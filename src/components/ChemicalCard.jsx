@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import TagBadge from './TagBadge';
 
-const ChemicalCard = ({ chemical, isFavorite, onToggleFavorite }) => {
+const ChemicalCard = ({ chemical, isFavorite, onToggleFavorite, isSelectable, isSelected, onToggleSelect }) => {
     const {
         id,
         name,
@@ -14,59 +14,93 @@ const ChemicalCard = ({ chemical, isFavorite, onToggleFavorite }) => {
         description
     } = chemical;
 
-    return (
+    const CardContent = () => (
         <div className="chemical-card" style={{
-            backgroundColor: 'var(--surface)',
+            backgroundColor: isSelected ? 'var(--primary-light)' : 'var(--surface)',
             borderRadius: 'var(--radius-lg)',
-            border: '1px solid var(--border-light)',
+            border: isSelected ? '2px solid var(--primary)' : '1px solid var(--border-light)',
             padding: '1.5rem',
             display: 'flex',
             flexDirection: 'column',
             gap: '1rem',
-            transition: 'transform var(--transition-fast), box-shadow var(--transition-fast)',
+            transition: 'all var(--transition-fast)',
             position: 'relative',
             height: '100%',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            transform: isSelected ? 'scale(1.02)' : 'none'
         }}
             onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px)';
-                e.currentTarget.style.boxShadow = 'var(--shadow-lg)';
+                if (!isSelected) {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.boxShadow = 'var(--shadow-lg)';
+                }
             }}
             onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'none';
+                if (!isSelected) {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                }
+            }}
+            onClick={(e) => {
+                if (isSelectable) {
+                    e.preventDefault();
+                    onToggleSelect(chemical);
+                }
             }}
         >
-            {/* Favorite Button */}
-            <button
-                onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    onToggleFavorite(id);
-                }}
-                style={{
+            {/* Selection Checkbox */}
+            {isSelectable && (
+                <div style={{
                     position: 'absolute',
                     top: '1rem',
-                    right: '1rem',
-                    background: 'transparent',
-                    border: 'none',
-                    cursor: 'pointer',
-                    color: isFavorite ? 'var(--accent)' : 'var(--text-tertiary)',
-                    padding: '4px',
-                    zIndex: 2
-                }}
-                aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
-            >
-                <svg
-                    width="20"
-                    height="20"
-                    fill={isFavorite ? "currentColor" : "none"}
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
+                    left: '1rem',
+                    zIndex: 3,
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '50%',
+                    backgroundColor: isSelected ? 'var(--primary)' : 'var(--bg-primary)',
+                    border: isSelected ? 'none' : '2px solid var(--border-dark)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'white'
+                }}>
+                    {isSelected && <span style={{ fontSize: '14px' }}>✓</span>}
+                </div>
+            )}
+
+            {/* Favorite Button (Hidden in select mode to prevent misclicks) */}
+            {!isSelectable && (
+                <button
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        onToggleFavorite(id);
+                    }}
+                    style={{
+                        position: 'absolute',
+                        top: '1rem',
+                        right: '1rem',
+                        background: 'transparent',
+                        border: 'none',
+                        cursor: 'pointer',
+                        color: isFavorite ? 'var(--accent)' : 'var(--text-tertiary)',
+                        padding: '4px',
+                        zIndex: 2
+                    }}
+                    aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
                 >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                </svg>
-            </button>
+                    <svg
+                        width="20"
+                        height="20"
+                        fill={isFavorite ? "currentColor" : "none"}
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                    >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                </button>
+            )}
 
             {/* Chemical Structure Placeholder / Image */}
             <div style={{
@@ -143,36 +177,37 @@ const ChemicalCard = ({ chemical, isFavorite, onToggleFavorite }) => {
                 </div>
             </div>
 
-            {/* Action Button */}
-            <Link
-                to={`/chemicals/${id}`}
-                style={{
+            {/* View Details Badge (Only show if NOT in select mode) */}
+            {!isSelectable && (
+                <div style={{
                     display: 'block',
                     textAlign: 'center',
                     padding: '0.625rem',
                     borderRadius: 'var(--radius-md)',
                     border: '1px solid var(--border-light)',
-                    color: 'var(--text-primary)',
+                    color: 'var(--primary)',
                     fontSize: '0.875rem',
                     fontWeight: 500,
                     marginTop: '0.5rem',
-                    transition: 'all var(--transition-fast)',
-                    textDecoration: 'none'
-                }}
-                onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = 'var(--primary)';
-                    e.currentTarget.style.color = 'var(--primary)';
-                    e.currentTarget.style.backgroundColor = 'var(--bg-secondary)';
-                }}
-                onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = 'var(--border-light)';
-                    e.currentTarget.style.color = 'var(--text-primary)';
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                }}
-            >
-                View Details
-            </Link>
+                    backgroundColor: 'var(--bg-secondary)'
+                }}>
+                    View Details →
+                </div>
+            )}
         </div>
+    );
+
+    if (isSelectable) {
+        return <div style={{ height: '100%' }}><CardContent /></div>;
+    }
+
+    return (
+        <Link
+            to={`/chemicals/${id}`}
+            style={{ textDecoration: 'none', display: 'block', height: '100%' }}
+        >
+            <CardContent />
+        </Link>
     );
 };
 

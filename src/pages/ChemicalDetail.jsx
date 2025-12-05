@@ -6,6 +6,7 @@ import { useRecentlyViewed } from "../hooks/useRecentlyViewed";
 import QRCodeModal from "../components/QRCodeModal";
 import ChemicalUsageHistory from "../components/ChemicalUsageHistory";
 import TagBadge from "../components/TagBadge";
+import { generateChemicalPDF } from "../utils/generatePDF";
 
 const BASE = import.meta.env.BASE_URL || '/';
 
@@ -18,6 +19,8 @@ function ChemicalDetail() {
   const [chemical, setChemical] = useState(null);
   const [showQR, setShowQR] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editedChemical, setEditedChemical] = useState(null);
 
   useEffect(() => {
     if (loading) return;
@@ -26,8 +29,30 @@ function ChemicalDetail() {
       String(c.CAS || c.id || c['Chemical Name'] || c.name || '').toLowerCase() === String(decodedId).toLowerCase()
     );
     setChemical(match || null);
+    setEditedChemical(match || null);
     if (match) addToRecent(match);
   }, [id, chemicals, loading]);
+
+  const handleEdit = () => {
+    setIsEditMode(true);
+    setEditedChemical({ ...chemical });
+  };
+
+  const handleSave = () => {
+    updateChemical(editedChemical);
+    setChemical(editedChemical);
+    setIsEditMode(false);
+    toast.success('Chemical updated successfully!');
+  };
+
+  const handleCancel = () => {
+    setEditedChemical({ ...chemical });
+    setIsEditMode(false);
+  };
+
+  const handleFieldChange = (field, value) => {
+    setEditedChemical({ ...editedChemical, [field]: value });
+  };
 
   const handleDelete = () => {
     if (window.confirm("Are you sure you want to delete this chemical? This cannot be undone.")) {
@@ -57,6 +82,8 @@ function ChemicalDetail() {
     { id: 'inventory', label: 'Inventory' },
     { id: 'history', label: 'History' }
   ];
+
+  const displayChemical = isEditMode ? editedChemical : chemical;
 
   return (
     <div className="chemical-detail-page" style={{ maxWidth: '1200px', margin: '0 auto' }}>
@@ -98,16 +125,31 @@ function ChemicalDetail() {
         </div>
 
         <div style={{ display: 'flex', gap: '0.75rem' }}>
-          <button className="btn btn-outline-secondary" onClick={() => setShowQR(true)}>
-            📷 QR Code
-          </button>
-          <button className="btn btn-outline-secondary" onClick={() => window.print()}>
-            🖨️ Print
-          </button>
-          <button className="btn btn-outline-danger" onClick={handleDelete}>
-            Delete
-          </button>
-          {/* Edit functionality would go here - for now just a placeholder or could link to edit page */}
+          {isEditMode ? (
+            <>
+              <button className="btn btn-primary" onClick={handleSave}>
+                💾 Save
+              </button>
+              <button className="btn btn-outline-secondary" onClick={handleCancel}>
+                ✖️ Cancel
+              </button>
+            </>
+          ) : (
+            <>
+              <button className="btn btn-primary" onClick={handleEdit}>
+                ✏️ Edit
+              </button>
+              <button className="btn btn-outline-secondary" onClick={() => generateChemicalPDF(chemical)}>
+                � PDF
+              </button>
+              <button className="btn btn-outline-secondary" onClick={() => setShowQR(true)}>
+                📷 QR Code
+              </button>
+              <button className="btn btn-outline-danger" onClick={handleDelete}>
+                Delete
+              </button>
+            </>
+          )}
         </div>
       </div>
 
@@ -177,18 +219,37 @@ function ChemicalDetail() {
                   </div>
                   <div style={{ flex: 1 }}>
                     <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem' }}>Description</h3>
-                    <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-                      {chemical.description || chemical.Properties || "No description available."}
-                    </p>
+                    {isEditMode ? (
+                      <textarea
+                        className="form-control"
+                        value={editedChemical.description || editedChemical.Properties || ''}
+                        onChange={(e) => handleFieldChange('description', e.target.value)}
+                        style={{ minHeight: '150px' }}
+                      />
+                    ) : (
+                      <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                        {displayChemical.description || displayChemical.Properties || "No description available."}
+                      </p>
+                    )}
 
                     <div style={{ marginTop: '1.5rem' }}>
                       <h4 style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Categories</h4>
-                      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                        {chemical.tags && chemical.tags.map(tag => (
-                          <TagBadge key={tag} label={tag} type={tag} outline />
-                        ))}
-                        {(!chemical.tags || chemical.tags.length === 0) && <span style={{ color: 'var(--text-tertiary)' }}>No categories assigned</span>}
-                      </div>
+                      {isEditMode ? (
+                        <input
+                          type="text"
+                          className="form-control"
+                          placeholder="Comma separated tags"
+                          value={Array.isArray(editedChemical.tags) ? editedChemical.tags.join(', ') : (editedChemical.tags || '')}
+                          onChange={(e) => handleFieldChange('tags', e.target.value.split(',').map(t => t.trim()))}
+                        />
+                      ) : (
+                        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                          {displayChemical.tags && displayChemical.tags.map(tag => (
+                            <TagBadge key={tag} label={tag} type={tag} outline />
+                          ))}
+                          {(!displayChemical.tags || displayChemical.tags.length === 0) && <span style={{ color: 'var(--text-tertiary)' }}>No categories assigned</span>}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -209,23 +270,43 @@ function ChemicalDetail() {
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1.5rem' }}>
                   <div>
                     <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Molecular Weight</div>
-                    <div style={{ fontWeight: 500 }}>{chemical["Molecular Weight"] || chemical.molecularWeight || "N/A"}</div>
+                    {isEditMode ? (
+                      <input type="text" className="form-control" value={editedChemical.molecularWeight || editedChemical["Molecular Weight"] || ''} onChange={(e) => handleFieldChange('molecularWeight', e.target.value)} />
+                    ) : (
+                      <div style={{ fontWeight: 500 }}>{displayChemical["Molecular Weight"] || displayChemical.molecularWeight || "N/A"}</div>
+                    )}
                   </div>
                   <div>
                     <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Density</div>
-                    <div style={{ fontWeight: 500 }}>{chemical["Density"] || chemical.density || "N/A"}</div>
+                    {isEditMode ? (
+                      <input type="text" className="form-control" value={editedChemical.density || editedChemical["Density"] || ''} onChange={(e) => handleFieldChange('density', e.target.value)} />
+                    ) : (
+                      <div style={{ fontWeight: 500 }}>{displayChemical["Density"] || displayChemical.density || "N/A"}</div>
+                    )}
                   </div>
                   <div>
                     <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Appearance</div>
-                    <div style={{ fontWeight: 500 }}>{chemical["Appearance"] || chemical.appearance || "N/A"}</div>
+                    {isEditMode ? (
+                      <input type="text" className="form-control" value={editedChemical.appearance || editedChemical["Appearance"] || ''} onChange={(e) => handleFieldChange('appearance', e.target.value)} />
+                    ) : (
+                      <div style={{ fontWeight: 500 }}>{displayChemical["Appearance"] || displayChemical.appearance || "N/A"}</div>
+                    )}
                   </div>
                   <div>
                     <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Melting Point</div>
-                    <div style={{ fontWeight: 500 }}>{chemical.meltingPoint || "N/A"}</div>
+                    {isEditMode ? (
+                      <input type="text" className="form-control" value={editedChemical.meltingPoint || ''} onChange={(e) => handleFieldChange('meltingPoint', e.target.value)} />
+                    ) : (
+                      <div style={{ fontWeight: 500 }}>{displayChemical.meltingPoint || "N/A"}</div>
+                    )}
                   </div>
                   <div>
                     <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Boiling Point</div>
-                    <div style={{ fontWeight: 500 }}>{chemical.boilingPoint || "N/A"}</div>
+                    {isEditMode ? (
+                      <input type="text" className="form-control" value={editedChemical.boilingPoint || ''} onChange={(e) => handleFieldChange('boilingPoint', e.target.value)} />
+                    ) : (
+                      <div style={{ fontWeight: 500 }}>{displayChemical.boilingPoint || "N/A"}</div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -245,28 +326,56 @@ function ChemicalDetail() {
 
                 <div style={{ marginBottom: '2rem' }}>
                   <h4 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.75rem' }}>Hazards</h4>
-                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                    {chemical.hazards && chemical.hazards.map(h => (
-                      <TagBadge key={h} label={h} type={h} />
-                    ))}
-                    {chemical["Hazard Information"] && (
-                      <p style={{ marginTop: '0.5rem', color: 'var(--text-secondary)' }}>{chemical["Hazard Information"]}</p>
-                    )}
-                  </div>
+                  {isEditMode ? (
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Comma separated hazards (e.g., Flammable, Toxic)"
+                      value={Array.isArray(editedChemical.hazards) ? editedChemical.hazards.join(', ') : (editedChemical.hazards || '')}
+                      onChange={(e) => handleFieldChange('hazards', e.target.value.split(',').map(h => h.trim()))}
+                    />
+                  ) : (
+                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                      {displayChemical.hazards && displayChemical.hazards.map(h => (
+                        <TagBadge key={h} label={h} type={h} />
+                      ))}
+                      {displayChemical["Hazard Information"] && (
+                        <p style={{ marginTop: '0.5rem', color: 'var(--text-secondary)' }}>{displayChemical["Hazard Information"]}</p>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 <div style={{ display: 'grid', gap: '1.5rem' }}>
                   <div>
                     <h4 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.5rem' }}>Handling & Storage</h4>
-                    <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-                      {chemical["Handling & Storage"] || "No specific instructions."}
-                    </p>
+                    {isEditMode ? (
+                      <textarea
+                        className="form-control"
+                        value={editedChemical["Handling & Storage"] || ''}
+                        onChange={(e) => handleFieldChange('Handling & Storage', e.target.value)}
+                        style={{ minHeight: '100px' }}
+                      />
+                    ) : (
+                      <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                        {displayChemical["Handling & Storage"] || "No specific instructions."}
+                      </p>
+                    )}
                   </div>
                   <div>
                     <h4 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.5rem' }}>Safety Notes</h4>
-                    <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-                      {chemical["Safety Notes"] || "No specific safety notes."}
-                    </p>
+                    {isEditMode ? (
+                      <textarea
+                        className="form-control"
+                        value={editedChemical["Safety Notes"] || ''}
+                        onChange={(e) => handleFieldChange('Safety Notes', e.target.value)}
+                        style={{ minHeight: '100px' }}
+                      />
+                    ) : (
+                      <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                        {displayChemical["Safety Notes"] || "No specific safety notes."}
+                      </p>
+                    )}
                   </div>
                   {chemical["SDS Link"] && (
                     <div>
@@ -300,23 +409,38 @@ function ChemicalDetail() {
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
                   <div style={{ padding: '1.5rem', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)' }}>
                     <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Current Quantity</div>
-                    <div style={{ fontSize: '1.5rem', fontWeight: 700 }}>
-                      {chemical.inventory?.quantity || 0} <span style={{ fontSize: '1rem', fontWeight: 400 }}>{chemical.inventory?.unit || 'g'}</span>
-                    </div>
+                    {isEditMode ? (
+                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <input type="number" className="form-control" value={editedChemical.inventory?.quantity || 0} onChange={(e) => handleFieldChange('inventory', { ...editedChemical.inventory, quantity: parseFloat(e.target.value) })} />
+                        <input type="text" className="form-control" style={{ width: '60px' }} value={editedChemical.inventory?.unit || 'g'} onChange={(e) => handleFieldChange('inventory', { ...editedChemical.inventory, unit: e.target.value })} />
+                      </div>
+                    ) : (
+                      <div style={{ fontSize: '1.5rem', fontWeight: 700 }}>
+                        {displayChemical.inventory?.quantity || 0} <span style={{ fontSize: '1rem', fontWeight: 400 }}>{displayChemical.inventory?.unit || 'g'}</span>
+                      </div>
+                    )}
                   </div>
 
                   <div style={{ padding: '1.5rem', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)' }}>
                     <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Location</div>
-                    <div style={{ fontSize: '1.25rem', fontWeight: 600 }}>
-                      {chemical.inventory?.location || 'Unassigned'}
-                    </div>
+                    {isEditMode ? (
+                      <input type="text" className="form-control" value={editedChemical.inventory?.location || ''} onChange={(e) => handleFieldChange('inventory', { ...editedChemical.inventory, location: e.target.value })} />
+                    ) : (
+                      <div style={{ fontSize: '1.25rem', fontWeight: 600 }}>
+                        {displayChemical.inventory?.location || 'Unassigned'}
+                      </div>
+                    )}
                   </div>
 
                   <div style={{ padding: '1.5rem', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)' }}>
                     <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Expiration Date</div>
-                    <div style={{ fontSize: '1.25rem', fontWeight: 600 }}>
-                      {chemical.inventory?.expirationDate ? new Date(chemical.inventory.expirationDate).toLocaleDateString() : 'N/A'}
-                    </div>
+                    {isEditMode ? (
+                      <input type="date" className="form-control" value={editedChemical.inventory?.expirationDate || ''} onChange={(e) => handleFieldChange('inventory', { ...editedChemical.inventory, expirationDate: e.target.value })} />
+                    ) : (
+                      <div style={{ fontSize: '1.25rem', fontWeight: 600 }}>
+                        {displayChemical.inventory?.expirationDate ? new Date(displayChemical.inventory.expirationDate).toLocaleDateString() : 'N/A'}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

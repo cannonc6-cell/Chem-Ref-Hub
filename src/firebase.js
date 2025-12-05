@@ -8,15 +8,15 @@ import {
 } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// Firebase configuration - use environment variables for security
 const firebaseConfig = {
-  apiKey: "AIzaSyD3ooSt0FqjobCiMDhYHJP_sz8OkdpXRyQ",
-  authDomain: "chem-ref-hub.firebaseapp.com",
-  projectId: "chem-ref-hub",
-  storageBucket: "chem-ref-hub.firebasestorage.app",
-  messagingSenderId: "850295909882",
-  appId: "1:850295909882:web:a02b4e0bee84930c098843",
-  measurementId: "G-74TP21ZDDV"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyD3ooSt0FqjobCiMDhYHJP_sz8OkdpXRyQ",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "chem-ref-hub.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "chem-ref-hub",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "chem-ref-hub.firebasestorage.app",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "850295909882",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:850295909882:web:a02b4e0bee84930c098843",
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-74TP21ZDDV"
 };
 
 const app = initializeApp(firebaseConfig);

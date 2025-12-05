@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import toast from 'react-hot-toast';
 import { useChemicals } from "../hooks/useChemicals";
 
@@ -469,3 +469,4 @@ function AddChemical() {
 }
 
 export default AddChemical;
+

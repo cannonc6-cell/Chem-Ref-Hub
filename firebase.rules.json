@@ -1,0 +1,25 @@
+{
+    "rules": {
+        ".read": "auth != null",
+        ".write": "auth != null",
+        "users": {
+            "$uid": {
+                ".read": "$uid === auth.uid",
+                ".write": "$uid === auth.uid",
+                "chemicals": {
+                    ".validate": "newData.hasChildren(['name', 'formula'])"
+                },
+                "logbook": {
+                    ".validate": "newData.hasChildren(['timestamp', 'logType'])"
+                },
+                "favorites": {
+                    ".validate": "newData.isString() || newData.isBoolean()"
+                }
+            }
+        },
+        "sharedChemicals": {
+            ".read": true,
+            ".write": "auth != null"
+        }
+    }
+}

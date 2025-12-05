@@ -2,7 +2,10 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useChemicals } from '../hooks/useChemicals';
 import ChemicalCard from '../components/ChemicalCard';
+import ExportToolbar from '../components/ExportToolbar';
 import SkeletonCard from '../components/SkeletonCard';
+import ChemicalCompareModal from '../components/ChemicalCompareModal';
+import BackupRestore from '../components/BackupRestore';
 
 function Chemicals() {
 	const { chemicals, loading, error, favorites, toggleFavorite } = useChemicals();
@@ -12,6 +15,11 @@ function Chemicals() {
 	const [selectedHazard, setSelectedHazard] = useState("");
 	const [favoritesOnly, setFavoritesOnly] = useState(false);
 	const [sortBy, setSortBy] = useState("name");
+
+	// Compare Mode State
+	const [isCompareMode, setIsCompareMode] = useState(false);
+	const [selectedChemicals, setSelectedChemicals] = useState(new Set());
+	const [showCompareModal, setShowCompareModal] = useState(false);
 
 	// Extract unique tags and hazards
 	const { allTags, allHazards } = useMemo(() => {
@@ -47,6 +55,44 @@ function Chemicals() {
 			});
 	}, [chemicals, searchTerm, selectedTag, selectedHazard, favoritesOnly, favorites, sortBy]);
 
+	// Toggle selection for compare
+	const toggleSelection = (chemical) => {
+		setSelectedChemicals(prev => {
+			const next = new Set(prev);
+			if (next.has(chemical.id)) {
+				next.delete(chemical.id);
+			} else {
+				if (next.size >= 4) {
+					alert("You can compare up to 4 chemicals at a time.");
+					return next;
+				}
+				next.add(chemical.id);
+			}
+			return next;
+		});
+	};
+
+	// Handle Compare Button Click
+	const handleCompareClick = () => {
+		if (!isCompareMode) {
+			setIsCompareMode(true);
+		} else {
+			if (selectedChemicals.size >= 2) {
+				setShowCompareModal(true);
+			} else if (selectedChemicals.size > 0) {
+				alert("Please select at least 2 chemicals to compare.");
+			} else {
+				setIsCompareMode(false);
+				setSelectedChemicals(new Set());
+			}
+		}
+	};
+
+	// Get selected chemical objects for the modal
+	const selectedChemicalObjects = useMemo(() => {
+		return chemicals.filter(c => selectedChemicals.has(c.id));
+	}, [chemicals, selectedChemicals]);
+
 	if (loading) {
 		return (
 			<div style={{ padding: '2rem' }}>
@@ -64,13 +110,36 @@ function Chemicals() {
 	return (
 		<div className="chemicals-page">
 			{/* Page Header */}
-			<div style={{ marginBottom: '2rem' }}>
-				<h1 style={{ fontSize: '1.875rem', fontWeight: 700, marginBottom: '0.5rem' }}>
-					Chemical Records
-				</h1>
-				<p style={{ color: 'var(--text-secondary)', fontSize: '1rem' }}>
-					Browse, search, and manage detailed chemical records effortlessly.
-				</p>
+			<div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem', flexWrap: 'wrap' }}>
+				<div>
+					<h1 style={{ fontSize: '1.875rem', fontWeight: 700, marginBottom: '0.5rem' }}>
+						Chemical Records
+					</h1>
+					<p style={{ color: 'var(--text-secondary)', fontSize: '1rem' }}>
+						Browse, search, and manage detailed chemical records effortlessly.
+					</p>
+				</div>
+				<div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+					{/* Compare Button */}
+					<button
+						className={`btn ${isCompareMode && selectedChemicals.size >= 2 ? 'btn-success' : 'btn-outline-primary'}`}
+						onClick={handleCompareClick}
+						style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+					>
+						<span>⚖️</span>
+						{isCompareMode
+							? (selectedChemicals.size > 0 ? `Compare Selected (${selectedChemicals.size})` : 'Cancel Compare')
+							: 'Compare'
+						}
+					</button>
+
+					<BackupRestore />
+
+					<ExportToolbar data={filteredChemicals} type="chemicals" />
+					<Link to="/add-chemical" className="btn btn-primary">
+						Add New Chemical
+					</Link>
+				</div>
 			</div>
 
 			{/* Filters Bar */}
@@ -85,6 +154,58 @@ function Chemicals() {
 				gap: '1rem',
 				alignItems: 'flex-end'
 			}}>
+				{/* Search Input */}
+				<div style={{ flex: 1, minWidth: '250px' }}>
+					<label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 500, marginBottom: '0.375rem', color: 'var(--text-secondary)' }}>
+						Search
+					</label>
+					<div style={{ position: 'relative' }}>
+						<div style={{
+							position: 'absolute',
+							left: '12px',
+							top: '50%',
+							transform: 'translateY(-50%)',
+							color: 'var(--text-tertiary)',
+							pointerEvents: 'none'
+						}}>
+							<svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+							</svg>
+						</div>
+						<input
+							type="text"
+							className="form-select"
+							placeholder="Search by name, formula, or CAS..."
+							value={searchTerm}
+							onChange={(e) => setSearchTerm(e.target.value)}
+							style={{ paddingLeft: '2.5rem', width: '100%' }}
+						/>
+						{searchTerm && (
+							<button
+								onClick={() => setSearchTerm('')}
+								style={{
+									position: 'absolute',
+									right: '8px',
+									top: '50%',
+									transform: 'translateY(-50%)',
+									background: 'none',
+									border: 'none',
+									cursor: 'pointer',
+									color: 'var(--text-tertiary)',
+									padding: '4px',
+									display: 'flex',
+									alignItems: 'center'
+								}}
+								aria-label="Clear search"
+							>
+								<svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+								</svg>
+							</button>
+						)}
+					</div>
+				</div>
+
 				{/* Category Filter */}
 				<div style={{ flex: 1, minWidth: '200px' }}>
 					<label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 500, marginBottom: '0.375rem', color: 'var(--text-secondary)' }}>
@@ -136,28 +257,6 @@ function Chemicals() {
 						<option value="formula">Formula</option>
 					</select>
 				</div>
-
-				{/* Add New Button */}
-				<div style={{ marginLeft: 'auto' }}>
-					<Link
-						to="/add-chemical"
-						className="btn btn-primary"
-						style={{
-							height: '42px',
-							display: 'inline-flex',
-							alignItems: 'center',
-							backgroundColor: 'var(--primary)',
-							borderColor: 'var(--primary)',
-							color: 'white',
-							padding: '0 1.5rem',
-							borderRadius: 'var(--radius-md)',
-							fontWeight: 500,
-							textDecoration: 'none'
-						}}
-					>
-						Add New Chemical
-					</Link>
-				</div>
 			</div>
 
 			{/* Favorites Toggle */}
@@ -190,6 +289,9 @@ function Chemicals() {
 							chemical={chem}
 							isFavorite={favorites.includes(chem.id)}
 							onToggleFavorite={toggleFavorite}
+							isSelectable={isCompareMode}
+							isSelected={selectedChemicals.has(chem.id)}
+							onToggleSelect={toggleSelection}
 						/>
 					))
 				) : (
@@ -199,9 +301,15 @@ function Chemicals() {
 					</div>
 				)}
 			</div>
+
+			{/* Compare Modal */}
+			<ChemicalCompareModal
+				show={showCompareModal}
+				onClose={() => setShowCompareModal(false)}
+				chemicals={selectedChemicalObjects}
+			/>
 		</div>
 	);
 }
 
 export default Chemicals;
-

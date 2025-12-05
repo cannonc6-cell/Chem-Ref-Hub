@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import ActivityTimeline from '../components/charts/ActivityTimeline';
 import HazardDistribution from '../components/charts/HazardDistribution';
 import TopChemicals from '../components/charts/TopChemicals';
+import DashboardQuickActions from '../components/DashboardQuickActions';
 import { getActivityTimeline, getHazardDistribution, getMostUsedChemicals } from '../utils/analytics';
 
 const BASE = import.meta.env.BASE_URL || '/';
@@ -90,6 +91,23 @@ function Dashboard() {
 	const hazardData = useMemo(() => getHazardDistribution(chemicals), [chemicals]);
 	const topUsedChemicals = useMemo(() => getMostUsedChemicals(logbook, chemicals), [logbook, chemicals]);
 	const activityData = useMemo(() => getActivityTimeline(logbook, recentItems), [logbook, recentItems]);
+
+	// Recently added chemicals (last 5)
+	const recentlyAdded = useMemo(() => {
+		const userChems = chemicals.filter(c => c.id && c.id.toString().length > 10); // User-added have timestamp IDs
+		return userChems
+			.sort((a, b) => (b.id || 0) - (a.id || 0))
+			.slice(0, 5);
+	}, [chemicals]);
+
+	// Low stock alerts
+	const lowStockItems = useMemo(() => {
+		return chemicals.filter(chem => {
+			const qty = chem.inventory?.quantity || 0;
+			const threshold = chem.inventory?.lowStockThreshold || 10;
+			return qty > 0 && qty <= threshold;
+		}).slice(0, 5);
+	}, [chemicals]);
 
 	return (
 		<div className="dashboard-page">
@@ -398,6 +416,9 @@ function Dashboard() {
 				</div>
 
 			</div>
+
+			{/* Quick Actions */}
+			<DashboardQuickActions recentlyAdded={recentlyAdded} lowStockItems={lowStockItems} />
 
 			{/* Analytics Section */}
 			<div style={{ marginBottom: '2.5rem' }}>

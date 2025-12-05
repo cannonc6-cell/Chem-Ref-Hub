@@ -15,6 +15,7 @@ import Calculators from './pages/Calculators.jsx';
 import Safety from './pages/Safety.jsx';
 import Logbook from './pages/Logbook.jsx';
 import ChemicalDetail from './pages/ChemicalDetail.jsx';
+import AdvancedAnalytics from './pages/AdvancedAnalytics.jsx';
 import About from './pages/About.jsx';
 import FAQ from './pages/FAQ.jsx';
 import Resources from './pages/Resources.jsx';
@@ -22,18 +23,14 @@ import Glossary from './pages/Glossary.jsx';
 import NotFound from './pages/NotFound.jsx';
 import UserProfile from './pages/UserProfile.jsx';
 import { Toaster } from 'react-hot-toast';
-import { SearchProvider, useSearch } from './context/SearchContext';
-import SearchModal from './components/search/SearchModal';
-import InstallPrompt from './components/InstallPrompt';
-import UpdateNotification from './components/UpdateNotification';
+import GlobalSearch from './components/GlobalSearch';
+// import InstallPrompt from './components/InstallPrompt';
+// import UpdateNotification from './components/UpdateNotification';
+// PWA components disabled temporarily - uncomment when PWA is fully configured
 
 function AppContent() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [search, setSearch] = useState("");
-
-  // Search is now handled locally in Chemicals page
-  const showSearch = false;
 
   // Global keyboard shortcuts: g+d/c/a/l for navigation
   useEffect(() => {
@@ -79,35 +76,14 @@ function AppContent() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [navigate]);
 
-  // Search modal state and keyboard shortcut (Cmd/Ctrl + K)
-  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
-  const { buildSearchIndex } = useSearch();
-
-  // Build search index when app loads
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const chemRes = await fetch(`${import.meta.env.BASE_URL || '/'}chemical_data.json`);
-        const chemicals = chemRes.ok ? await chemRes.json() : [];
-        const userChems = JSON.parse(localStorage.getItem('userChemicals') || '[]');
-        const allChemicals = [...chemicals, ...(Array.isArray(userChems) ? userChems : [])];
-
-        const logbook = JSON.parse(localStorage.getItem('chemicalLogbook') || '[]');
-
-        buildSearchIndex(allChemicals, logbook);
-      } catch (error) {
-        console.error('Error loading search data:', error);
-      }
-    };
-    loadData();
-  }, [buildSearchIndex]);
-
   // Global search keyboard shortcut (Cmd/Ctrl + K)
+  const [showGlobalSearch, setShowGlobalSearch] = useState(false);
+
   useEffect(() => {
     const handleSearchShortcut = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
-        setIsSearchModalOpen(true);
+        setShowGlobalSearch(true);
       }
     };
 
@@ -129,11 +105,7 @@ function AppContent() {
         width: 'calc(100% - var(--sidebar-width))', // Ensure width is correct
         marginTop: 0 // Explicitly remove top margin
       }}>
-        <Nav
-          searchValue={search}
-          onSearchChange={setSearch}
-          showSearch={showSearch}
-        />
+        <Nav />
         <main id="main-content" style={{ flex: 1, padding: '2rem' }}>
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
@@ -141,6 +113,7 @@ function AppContent() {
             <Route path="/chemicals" element={<Chemicals />} />
             <Route path="/chemicals/:id" element={<ChemicalDetail />} />
             <Route path="/add-chemical" element={<AddChemical />} />
+            <Route path="/analytics" element={<AdvancedAnalytics />} />
             <Route path="/calculators" element={<Calculators />} />
             <Route path="/safety" element={<Safety />} />
             <Route path="/logbook" element={<Logbook />} />
@@ -154,6 +127,7 @@ function AppContent() {
         </main>
         <Footer />
         <BackToTop />
+        <GlobalSearch show={showGlobalSearch} onClose={() => setShowGlobalSearch(false)} />
         <Toaster
           position="top-right"
           reverseOrder={false}
@@ -177,12 +151,9 @@ function AppContent() {
 }
 
 function App() {
-  // Main App Component
   return (
     <Router>
-      <SearchProvider>
-        <AppContent />
-      </SearchProvider>
+      <AppContent />
     </Router>
   );
 }
