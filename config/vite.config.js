@@ -48,7 +48,7 @@ export default defineConfig({
           }
         ],
         navigateFallback: '/offline.html',
-        navigateFallbackDenylist: [/^\/api/]
+        navigateFallbackDenylist: [/^\/api/, /sitemap\.xml$/, /robots\.txt$/]
       },
       devOptions: {
         enabled: true,
